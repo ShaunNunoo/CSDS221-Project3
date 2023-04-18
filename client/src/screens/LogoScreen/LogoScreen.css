@@ -1,0 +1,29 @@
+
+.LogoScreen{
+    background: url("../../Images/SpaceBackground1.png");
+    background-repeat: repeat;
+    height: 100vh;
+    width: 100vw;
+}
+
+.GameLogo{
+    position: fixed;
+    left: calc(50vw - 375px);
+    top: calc(50vh - 300px);
+    width: 750px;
+    height: 600px;
+   
+}
+
+.PlayButton{
+    position: fixed;
+    left: calc(50vw - 100px);
+    top: calc(50vh + 120px);
+    width: 200px; 
+    height: 60px;
+    font-family: fantasy;
+    font-weight: bold;
+    color: white;
+    font-size: 3em;
+    background-color: transparent;
+}

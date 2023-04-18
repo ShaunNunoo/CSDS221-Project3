@@ -1,4 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Routes
+} from "react-router-dom";
+import './App.css'
+
+import LogoScreen from './screens/LogoScreen/LogoScreen'
 
 
 function App() {
@@ -15,16 +25,17 @@ function App() {
     )
   }, [])
   return (
-    <div className="App">
+    <div className='App'
+      style={{
+        backgroundColor: "blue",
+      }}
+    >
+      <Router>
+        <Routes>
+          <Route path="/" element={<LogoScreen />} />
 
-      {(typeof backendData.users === 'undefined') ? (
-        <p>Loading...</p>
-      ) : (
-          backendData.users.map((user, i) => (
-            <p key={i}>{user}</p>
-          ))
-      )}
-
+        </Routes>
+      </Router>
     </div>
   );
 }
