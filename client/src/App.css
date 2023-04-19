@@ -1,9 +1,23 @@
 
 
 html{
+
     overflow: hidden;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+
 }
 
 body{
     overflow: hidden;
+    user-zoom: fixed;
 }
+
+img {
+    pointer-events: none;
+    
+}
+

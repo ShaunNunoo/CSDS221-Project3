@@ -1,23 +1,341 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Images from '../../Images'
+import { useNavigate } from "react-router-dom";
 import '../LogoScreen/LogoScreen.css'
 import LobbyTheme from '../../Sounds/LobbyTheme.mp3'
-import MenuScreen from '../MenuScreen/MenuScreen'
+import { scale, scaleH, scaleV } from '../../App'
+import { selectedPlanet } from '../ChangePlanet/ChangePlanet';
+import GameObject from '../../components/GameObject';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Form from 'react-bootstrap/Form';
+var screen = "logo"
+var music = new Audio(LobbyTheme);
 
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Routes
-} from "react-router-dom";
+var earthSheild = new GameObject([500, 500], [225, 75], 0, Images.PlanetSheild, "none", "", false);
 
-
+music.play();
 const LogoScreen = () => {
+    const navigate = useNavigate();
+    var [name, setName] = useState("");
+
     var [backgroundX, setBackgroundX] = useState(0);
     var [backgroundY, setBackgroundY] = useState(0);
     var [logoOpacity, setLogoOpacity] = useState(0);
-    var [music, setMusic] = useState(new Audio(LobbyTheme));
+    var [hoverSolo, setHoverSolo] = useState(false);
+    var [hoverMP, setHoverMP] = useState(false);
+    var [hoverCP, setHoverCP] = useState(false);
+
+
+    const [mousePos, setMousePos] = useState({});
+
+    useEffect(() => {
+        const handleMouseMove = (event) => {
+            setMousePos({ x: event.clientX, y: event.clientY });
+
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+
+        return () => {
+
+            window.removeEventListener(
+                'mousemove',
+                handleMouseMove
+            );
+        };
+
+
+
+    }, []);
+
+    useEffect(() => {
+
+        earthSheild.setOrientation(Math.atan2(mousePos.y - window.screen.height, mousePos.x) * 180 / Math.PI + 90);
+        earthSheild.setPosition(scale(550 * Math.cos(Math.atan2(window.screen.height - mousePos.y, mousePos.x))), window.screen.height - scale(550 * Math.sin(Math.atan2(window.screen.height - mousePos.y, mousePos.x))));
+    }, [mousePos.x, mousePos.y]);
+
+    const displayQueueScreen = function () {
+        return (
+            <div>
+                <img
+                    src={Images.GameLogo}
+                    style={{
+                        left: window.screen.width - scale(180),
+                        top: window.screen.height - scale(144),
+                        position: 'absolute',
+                        width: scale(180),
+                        height: scale(144),
+                        zIndex: 100000,
+
+                    }}
+                />
+
+                <button
+                    onClick={() => {
+                        screen = "menu";
+                    }}
+
+                    style={{
+                        borderWidth: 0,
+                        position: 'absolute',
+                        top: scaleV(10),
+                        left: scale(10),
+                        height: scale(80),
+                        width: scale(80),
+                        borderColor: "lightblue",
+                        backgroundColor: "transparent",
+                        borderWidth: scale(4),
+                        borderRadius: scale(100)
+
+
+                    }}
+
+                />
+
+                <img
+
+                    style={{
+                        position: 'absolute',
+                        top: scaleV(25),
+                        left: scale(23),
+                        height: scale(50),
+                        width: scale(50),
+                        transform: "scaleX(-1)"
+
+                    }}
+                    src={Images.BackButton2}
+                />
+
+                <Form.Group
+                >
+                    <Form.Control
+                        maxLength={15}
+                        onChange={(event) => {
+                            setName(event.target.value);
+                        }}
+
+                        style={{
+                            backgroundColor: "black",
+                            color: 'white',
+                            borderRadius: 0,
+                            textAlign: "center",
+                            width: scale(300),
+                            height: scale(40),
+                            fontSize: scale(20),
+                            position: 'absolute',
+                            left: window.screen.width / 2 - scale(150),
+                            top: window.screen.height / 2 - scale(50),
+
+                        }}
+                        placeholder="Enter Name" />
+
+                </Form.Group>
+
+                <button className='PlayButton'
+                    disabled={name == ""}
+                    style={{
+                        left: window.screen.width / 2 - scale(100),
+                        top: window.screen.height / 2 + scale(30),
+                        width: scale(200),
+                        height: scale(60),
+                        fontSize: scale(40),
+                        color: (name == "") ? "grey" : "cyan",
+
+                    }}
+                    onClick={() => {
+
+                    }}
+                >
+
+                    QUEUE
+                </button>
+
+            </div>
+        )
+    }
+
+    const displayLogo = function () {
+
+        return (
+            <div>
+                <img
+                    src={Images.GameLogo}
+                    style={{
+                        opacity: logoOpacity,
+                        left: window.screen.width / 2 - scale(300),
+                        top: window.screen.height / 2 - scale(300),
+                        position: 'absolute',
+                        width: scale(600),
+                        height: scale(480),
+
+                    }}
+                />
+
+
+
+                <button className='PlayButton'
+                    disabled={logoOpacity < 1}
+                    style={{
+
+                        opacity: (logoOpacity >= 1) ? 1 : 0,
+                        left: window.screen.width / 2 - scale(100),
+                        top: window.screen.height / 2 + scale(220),
+                        width: scale(200),
+                        height: scale(60),
+                        fontSize: scale(40),
+
+                    }}
+                    onClick={() => {
+                        screen = "menu";
+                    }}
+                >
+
+                    PLAY
+                </button>
+            </div>
+        )
+
+    }
+
+    const displayMenu = function () {
+        return (
+            <div
+                style={{
+                    color: 'red'
+                }}
+            >
+                <img
+                    src={selectedPlanet.planet}
+                    style={{
+                        position: 'absolute',
+                        top: window.screen.height - scale(500),
+                        left: -scale(500),
+                        width: scale(1000),
+                        height: scale(1000),
+
+                    }}
+                />
+
+                <img
+                    src={Images.GameLogo}
+                    style={{
+                        left: window.screen.width - scale(180),
+                        top: window.screen.height - scale(144),
+                        position: 'absolute',
+                        width: scale(180),
+                        height: scale(144),
+                        zIndex: 100000,
+
+                    }}
+                />
+
+                {earthSheild.render()}
+
+                <div className='menuButton '
+                    style={{
+                        width: scale(120),
+                        height: scale(100),
+                        display: "grid",
+                        top: scaleV(230),
+                        left: scale(100),
+                        fontSize: (hoverSolo) ? scale(60) : scale(40),
+                        color: (hoverSolo) ? "blueviolet" : "white",
+                        textShadow: "10 10 #FF0000"
+                    }}
+                >
+
+                    <label
+                        style={{
+                            justifySelf: "center",
+                            alignSelf: "center"
+                        }}
+                        onMouseOver={() => {
+                            setHoverSolo(true);
+                        }}
+
+                        onMouseLeave={() => {
+                            setHoverSolo(false);
+                        }}
+
+                    >
+                        SOLO
+                    </label>
+                </div>
+
+
+                <div className='menuButton '
+                    style={{
+                        width: scale(300),
+                        height: scale(100),
+                        display: "grid",
+                        top: scaleV(450),
+                        left: scale(410),
+                        fontSize: (hoverMP) ? scale(60) : scale(40),
+                        color: (hoverMP) ? "blueviolet" : "white",
+                    }}
+                >
+
+                    <label
+                        onClick={() => {
+                            setHoverMP(false);
+                            screen = "queue";
+
+                        }}
+                        style={{
+                            justifySelf: "center",
+                            alignSelf: "center"
+                        }}
+                        onMouseOver={() => {
+                            setHoverMP(true);
+                        }}
+
+                        onMouseLeave={() => {
+                            setHoverMP(false);
+                        }}
+
+                    >
+                        MULTIPLAYER
+                    </label>
+                </div>
+
+
+                <div className='menuButton '
+                    style={{
+                        width: scale(400),
+                        height: scale(100),
+                        display: "grid",
+                        top: scaleV(750),
+                        left: scale(490),
+                        fontSize: (hoverCP) ? scale(60) : scale(40),
+                        color: (hoverCP) ? "blueviolet" : "white",
+                    }}
+                >
+
+                    <label
+                        style={{
+                            justifySelf: "center",
+                            alignSelf: "center"
+                        }}
+                        onMouseOver={() => {
+                            setHoverCP(true);
+                        }}
+
+                        onMouseLeave={() => {
+                            setHoverCP(false);
+                        }}
+
+                        onClick={() => {
+                            navigate('ChangePlanetScreen');
+                        }}
+
+                    >
+                        CHANGE PLANET
+                    </label>
+                </div>
+
+            </div>
+        )
+    }
 
     useEffect(() => {
         var img = new Image();
@@ -39,15 +357,6 @@ const LogoScreen = () => {
 
 
 
-
-    useEffect(() => {
-        const playMusic = setInterval(() => {
-            music.play();
-        }, 1000);
-
-    }, []);
-
-
     return (
         <div className='LogoScreen'
             style={{
@@ -55,27 +364,14 @@ const LogoScreen = () => {
                 backgroundPositionY: backgroundY,
             }}
         >
-            <img
-                className='GameLogo'
-                src={Images.GameLogo}
-                style={{
-                    opacity: logoOpacity
-                }}
-            />
-
-            <button className='PlayButton'
-                style={{ opacity: (logoOpacity >= 1) ? 1 : 0 }}
-            >
-                PLAY
-            </button>
-
-            <Routes>
-                <Route path="/" element={<MenuScreen />} />
-            </Routes>
+            {(screen == "logo") && displayLogo()}
+            {(screen == "menu") && displayMenu()}
+            {(screen == "queue") && displayQueueScreen()}
 
 
-        </div >
+        </div>
     );
+
 
 };
 

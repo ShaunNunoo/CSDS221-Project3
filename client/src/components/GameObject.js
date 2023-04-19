@@ -1,11 +1,32 @@
 import React, { Component, useState, useEffect } from 'react'
 import Images from '../Images';
+import { scale, scaleH, scaleV } from '../App';
 
-class GameObject extends Component {
+var GameObjects = [];
+
+class GameObject {
+
+    speed = 0;
+    image = "";
+    orientation = 0;
+    id = "";
+    angularVelocity = 0;
+    isCollidable = false;
+    applyPhysics = false;
+    visible = true;
+    zIndex = 0;
+
+
     position = [{
         x: 0,
         y: 0
     }];
+
+    direction = [{
+        x: 0,
+        y: 0
+    }];
+
 
     pivot = [{
         x: this.position.x,
@@ -13,30 +34,37 @@ class GameObject extends Component {
     }]
 
     size = [{
-        width: 100,
-        height: 100
+        width: 64,
+        height: 64
     }];
 
 
 
-    image = "";
+    constructor(position, size, orientation, image, id, type, addToGame) {
+        if (addToGame)
+            GameObjects.push(this);
 
-    orientation = 50;
+        this.position.x = position[0];
+        this.position.y = position[1];
 
-    hitBox = "";
+        this.size.width = size[0];
+        this.size.height = size[1];
 
-    constructor(props) {
-        super(props);
+        this.orientation = orientation;
+        this.id = id;
+        this.image = image;
+    }
 
-        this.position.x = props.position[0];
-        this.position.y = props.position[1];
 
-        this.size.width = props.size[0];
-        this.size.height = props.size[1];
+    setPosition(x, y) {
+        this.position.x = x;
+        this.position.y = y;
+    }
 
-        this.orientation = props.orientation;
-        this.hitBox = props.hitBox;
-        this.image = props.image;
+    setDirection(direction) {
+        var magnitude = Math.sqrt(Math.pow(direction[0], 2) + Math.pow(direction[1], 2));
+        this.direction.x = direction[0] / magnitude;
+        this.direction.y = direction[1] / magnitude;
     }
 
     setPivot(pivot) {
@@ -48,67 +76,79 @@ class GameObject extends Component {
         this.orientation = angle % 360;
     }
 
+    onCollision(object, action) {
 
-    hasCollided(object) {
         var xDiff = Math.abs(this.position.x - object.position.x);
         var yDiff = Math.abs(this.position.y - object.position.y);
+        var mag = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+        //var directionalSpeed = this.speed * (this.direction.x * xDiff + this.direction.y * yDiff);
 
-        if (object.hitBox == "rectangle") {
-            if (this.hitBox == "rectangle")
-                if (xDiff < (this.size.width + object.size.width) / 2 &&
-                    yDiff < (this.size.height + object.size.height) / 2)
-                    return true;
-                else return false;
-            else if (this.hitBox == "circle")
-                return false;
-        }
 
-        return false;
+        if (mag <= + Math.min(object.size.width, object.size.height) / 2 + Math.min(this.size.width, this.size.height) / 2 &&
+            this.isCollidable &&
+            object.isCollidable)
+            action(this, [xDiff / mag, yDiff / mag]);
+
+
+
+
     }
 
-    hasBoundX() {
-        return (this.position.x - this.size.width / 2 < 0 || this.position.x + this.size.width / 2 > window.screen.width);
-    }
+    onBorderCollision(action) {
+        if (this.position.x - this.size.width / 2 < 0 - this.speed || this.position.x + this.size.width / 2 + this.speed > window.screen.width)
+            action(this, "x-collision");
 
-    hasBoundY() {
-        return (this.position.y - this.size.height / 2 < 0 || this.position.y + this.size.height / 2 > window.screen.height);
-    }
+        else if ((this.position.y - this.size.height / 2 < 0 - this.speed || this.position.y + this.size.height / 2 + this.speed > window.screen.height))
+            action(this, "y-collision");
 
-    setPosition(x, y) {
-        this.position.x = x;
-        this.position.y = y;
     }
-
 
     render() {
-        return (
-            <div>
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: this.position.y,
-                        left: this.position.x,
-                        width: 0,
-                        height: 0,
-                    }}
-                >
-                    <img
-                        style={{
-                            height: this.size.height,
-                            width: this.size.width,
-                            position: 'relative',
-                            bottom: this.size.height / 2,
-                            right: this.size.width / 2,
-                            backgroundColor: (this.image == "") ? "grey" : "transparent",
-                            transform: "rotate(" + this.orientation + "deg)",
-                        }
-                        }
+        if (this.visible)
+            return (
 
-                        src={this.image}
-                    />
+                <div>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: scaleV(this.position.y),
+                            left: scale(this.position.x),
+                            width: 0,
+                            height: 0,
+                        }}
+                    >
+                        <img
+                            style={{
+                                height: scale(this.size.height),
+                                width: scale(this.size.width),
+                                position: 'relative',
+                                bottom: scale(this.size.height) / 2,
+                                right: scale(this.size.width) / 2,
+                                backgroundColor: (this.image == "") ? "grey" : "transparent",
+                                transform: "rotate(" + this.orientation + "deg)",
+                                zIndex: this.zIndex,
+                            }
+                            }
+
+                            src={this.image}
+                        />
+                    </div>
+
+                    <label
+                        style={{
+                            color: 'white',
+                            position: 'absolute',
+                            top: this.position.y,
+                            left: this.position.x,
+                            zIndex: this.zIndex + 100,
+
+                        }}
+
+                    >
+
+                    </label>
                 </div>
-            </div>
-        )
+            )
     }
 
 }
@@ -116,6 +156,10 @@ class GameObject extends Component {
 
 
 export default GameObject;
+
+export {
+    GameObjects
+}
 
 
 
