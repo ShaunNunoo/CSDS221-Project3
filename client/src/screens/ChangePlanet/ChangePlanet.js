@@ -187,8 +187,9 @@ const ChangePlanet = () => {
                     borderRadius: scale(10),
                     borderWidth: scale(4),
                     padding: 0,
-                    backgroundColor: "lightgrey",
-                    borderColor: "grey"
+                    backgroundColor: "black",
+                    borderColor: "white"
+
 
                 }}
             />
@@ -238,12 +239,12 @@ const ChangePlanet = () => {
 
             <div className="d-flex"
                 style={{
-                    backgroundColor: "lightgrey",
-                    borderRadius: scale(10),
-                    borderColor: "black",
-                    borderWidth: scale(5),
+                    backgroundColor: "black",
+                    borderColor: "white",
+                    borderWidth: scale(2),
                     position: 'absolute',
                     padding: scale(30),
+                    borderStyle: "solid",
                     display: 'grid',
                     alignContent: 'center',
                     width: scale(1000),
@@ -256,7 +257,7 @@ const ChangePlanet = () => {
                     style={{
                         fontFamily: 'fantasy',
                         fontWeight: 'bold',
-                        color: '#0D6EFD',
+                        color: '#198754',
                         alignSelf: 'center',
                         fontSize: scale(30)
                     }}
@@ -265,6 +266,8 @@ const ChangePlanet = () => {
                 </label>
 
                 <ProgressBar
+                    variant="success"
+                    animated
                     now={selectedPlanet.stats.strength}
                     style={{
                         backgroundColor: "grey",
@@ -290,6 +293,7 @@ const ChangePlanet = () => {
                 </label>
 
                 <ProgressBar
+                    animated
                     className='defence'
                     now={selectedPlanet.stats.defence}
                     style={{
@@ -328,8 +332,8 @@ const ChangePlanet = () => {
                     width: scale(60),
                     borderRadius: scale(10),
                     borderWidth: scale(4),
-                    backgroundColor: "lightgrey",
-                    borderColor: "grey"
+                    backgroundColor: "black",
+                    borderColor: "white"
 
                 }}
             />

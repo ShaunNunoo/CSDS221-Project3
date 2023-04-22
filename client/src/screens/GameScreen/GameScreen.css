@@ -1,0 +1,6 @@
+.GameScreen {
+    background: url("../../Images/SpaceBackground2.png");
+    background-repeat: repeat;
+    height: 100vh;
+    width: 100vw;
+}

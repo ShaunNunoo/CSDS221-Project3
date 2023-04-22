@@ -1,26 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Routes
-} from "react-router-dom";
 import './App.css'
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import GameScreen from './screens/GameScreen/GameScreen';
 import LogoScreen from './screens/LogoScreen/LogoScreen'
 import ChangePlanet from './screens/ChangePlanet/ChangePlanet';
-const scaleV = function (val) {
-  return val * window.screen.height / 863;
-}
-
-const scaleH = function (val) {
-  return val * window.screen.width / 1535;
-}
-
-const scale = function (val) {
-  return val * Math.min(window.screen.height, window.screen.width) / 863;
-}
 
 function App() {
 
@@ -35,6 +18,8 @@ function App() {
       }
     )
   }, [])
+
+
   return (
     <Router>
       <div className='App'>
@@ -51,6 +36,17 @@ function App() {
 
 export default App;
 
+const scaleV = function (val) {
+  return val * window.screen.height / 863;
+}
+
+const scaleH = function (val) {
+  return val * window.screen.width / 1535;
+}
+
+const scale = function (val) {
+  return val * Math.min(window.screen.height, window.screen.width) / 863;
+}
 
 export {
   scale,

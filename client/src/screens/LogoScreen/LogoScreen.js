@@ -10,23 +10,27 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
 var screen = "logo"
 var music = new Audio(LobbyTheme);
-
 var earthSheild = new GameObject([500, 500], [225, 75], 0, Images.PlanetSheild, "none", "", false);
-
+var planet = new GameObject([0, window.screen.height], [1000, 1000], 0, selectedPlanet.planet, "none", "", false);
+var planetAngle = 0;
+var gameName = ""
 music.play();
+
 const LogoScreen = () => {
     const navigate = useNavigate();
     var [name, setName] = useState("");
-
+    var [playersCount, setPLayersCount] = useState(4);
     var [backgroundX, setBackgroundX] = useState(0);
     var [backgroundY, setBackgroundY] = useState(0);
     var [logoOpacity, setLogoOpacity] = useState(0);
+
     var [hoverSolo, setHoverSolo] = useState(false);
     var [hoverMP, setHoverMP] = useState(false);
     var [hoverCP, setHoverCP] = useState(false);
 
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-    const [mousePos, setMousePos] = useState({});
+
 
     useEffect(() => {
         const handleMouseMove = (event) => {
@@ -49,12 +53,33 @@ const LogoScreen = () => {
     }, []);
 
     useEffect(() => {
+        planet.image = selectedPlanet.planet;
+    }, [selectedPlanet])
+
+    useEffect(() => {
+        const planetRotation = setInterval(() => {
+            planetAngle = (planetAngle + 0.01) % 360;
+
+        }, 1);
+
+        return () => clearInterval(planetRotation);
+
+    }, []);
+
+    useEffect(() => {
+        gameName = name;
+    }, [name])
+
+    useEffect(() => {
 
         earthSheild.setOrientation(Math.atan2(mousePos.y - window.screen.height, mousePos.x) * 180 / Math.PI + 90);
         earthSheild.setPosition(scale(550 * Math.cos(Math.atan2(window.screen.height - mousePos.y, mousePos.x))), window.screen.height - scale(550 * Math.sin(Math.atan2(window.screen.height - mousePos.y, mousePos.x))));
     }, [mousePos.x, mousePos.y]);
 
+
+
     const displayQueueScreen = function () {
+
         return (
             <div>
                 <img
@@ -91,6 +116,89 @@ const LogoScreen = () => {
                     }}
 
                 />
+
+                <button
+
+                    onClick={() => {
+                        if (playersCount < 4)
+                            setPLayersCount(playersCount + 1)
+                    }}
+                    style={{
+                        position: 'absolute',
+                        top: window.screen.height / 2 + scale(25),
+                        left: window.screen.width / 2 + scale(105),
+                        backgroundColor: "black",
+                        borderColor: "white",
+                        borderRadius: scale(10),
+                        borderWidth: scale(4),
+                        height: scale(50),
+                        width: scale(50),
+                    }}
+                />
+
+                <button
+
+                    onClick={() => {
+                        if (playersCount > 2)
+                            setPLayersCount(playersCount - 1)
+                    }}
+                    style={{
+                        position: 'absolute',
+                        top: window.screen.height / 2 + scale(25),
+                        left: window.screen.width / 2 - scale(155),
+                        backgroundColor: "black",
+                        borderColor: "white",
+                        borderRadius: scale(10),
+                        borderWidth: scale(4),
+                        height: scale(50),
+                        width: scale(50),
+                    }}
+                />
+                <label
+                    style={{
+                        position: 'absolute',
+                        height: scale(40),
+                        width: scale(40),
+                        top: window.screen.height / 2 + scale(17),
+                        left: window.screen.width / 2 - scale(10),
+                        fontFamily: 'fantasy',
+                        fontWeight: 'bold',
+                        fontSize: scale(50),
+                        zIndex: 1000,
+                        color: "white"
+                    }}
+                >
+                    {playersCount}
+                </label>
+
+
+                <img
+
+                    style={{
+                        position: 'absolute',
+                        height: scale(40),
+                        width: scale(40),
+                        top: window.screen.height / 2 + scale(30),
+                        left: window.screen.width / 2 - scale(150),
+                        zIndex: 1000,
+                    }}
+                    src={Images.BackButton}
+                />
+
+                <img
+
+                    style={{
+                        position: 'absolute',
+                        top: window.screen.height / 2 + scale(30),
+                        left: window.screen.width / 2 + scale(110),
+                        height: scale(40),
+                        width: scale(40),
+                        zIndex: 1000,
+                        transform: "rotate(180deg) scaleY(-1)"
+                    }}
+                    src={Images.BackButton}
+                />
+
 
                 <img
 
@@ -135,7 +243,7 @@ const LogoScreen = () => {
                     disabled={name == ""}
                     style={{
                         left: window.screen.width / 2 - scale(100),
-                        top: window.screen.height / 2 + scale(30),
+                        top: window.screen.height / 2 + scale(105),
                         width: scale(200),
                         height: scale(60),
                         fontSize: scale(40),
@@ -143,7 +251,7 @@ const LogoScreen = () => {
 
                     }}
                     onClick={() => {
-
+                        navigate('GameScreen');
                     }}
                 >
 
@@ -155,6 +263,7 @@ const LogoScreen = () => {
     }
 
     const displayLogo = function () {
+
 
         return (
             <div>
@@ -198,23 +307,16 @@ const LogoScreen = () => {
     }
 
     const displayMenu = function () {
+
+        planet.setOrientation(planetAngle);
         return (
             <div
                 style={{
                     color: 'red'
                 }}
             >
-                <img
-                    src={selectedPlanet.planet}
-                    style={{
-                        position: 'absolute',
-                        top: window.screen.height - scale(500),
-                        left: -scale(500),
-                        width: scale(1000),
-                        height: scale(1000),
 
-                    }}
-                />
+                {planet.render()}
 
                 <img
                     src={Images.GameLogo}
@@ -376,3 +478,7 @@ const LogoScreen = () => {
 };
 
 export default LogoScreen;
+
+export {
+    gameName
+}

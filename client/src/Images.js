@@ -1,6 +1,7 @@
 export default {
     GameLogo: require('./Images/GameLogo.png'),
     SpaceBackground1: require('./Images/SpaceBackground1.png'),
+    SpaceBackground2: require('./Images/SpaceBackground2.png'),
     Meteor: require('./Images/meteor.png'),
     Earth: require('./Images/Earth.png'),
     Mars: require('./Images/Mars.png'),
@@ -13,4 +14,5 @@ export default {
     BackButton2: require("./Images/backButton2.png"),
     Jupiter: require("./Images/Jupiter.png"),
     Venus: require("./Images/Venus.png"),
+    ExplosionSprite: require("./Images/ExplosionSprite.png"),
 }
