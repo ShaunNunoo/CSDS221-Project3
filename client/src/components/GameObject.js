@@ -110,12 +110,7 @@ class GameObject {
     }
 
     destroy() {
-        console.log("Before: ");
-        console.log(GameObjects);
         GameObjects.splice(GameObjects.indexOf(this), 1);
-        console.log("After: ");
-        console.log(GameObjects);
-
     }
     setOrientation(angle) {
         this.orientation = angle % 360;
@@ -131,7 +126,7 @@ class GameObject {
             if (mag <= + Math.min(object.size.width, object.size.height) / 2 + Math.min(this.size.width, this.size.height) / 2 &&
                 this.isCollidable &&
                 object.isCollidable)
-                action(this, [(0.6 + Math.random() * 0.4) * xDiff / mag, (0.6 + Math.random() * 0.4) * yDiff / mag]);
+                action(this, [(0.5 + Math.random() * 0.5) * xDiff / mag, (0.5 + Math.random() * 0.5) * yDiff / mag]);
         } else if (object.id == "dfs" && this.isCollidable && object.isCollidable) {
 
             var leftEnd = [{

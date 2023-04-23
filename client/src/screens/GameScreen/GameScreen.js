@@ -19,7 +19,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import GameSprite from '../../components/GameSprite'
 import { GameSprites } from '../../components/GameSprite'
-
+import Explosion from '../../Sounds/Explosion.mp3'
 
 
 var earth = new GameObject([0, 0], [500, 500], 0, selectedPlanet.planet, "planet", "", true);
@@ -54,6 +54,7 @@ const GameScreen = () => {
                         object.direction.y *= -1;
 
                 });
+                
 
             } else if (GameObjects[i].id == "planet")
                 planets.push(GameObjects[i])
@@ -83,9 +84,13 @@ const GameScreen = () => {
                 var currentMeteor = meteors[i];
                 var currentPlanet = planets[j];
                 currentMeteor.onCollision(currentPlanet, (object, collisionNormal) => {
-                    new GameSprite(Images.ExplosionSprite, 5, 3, [object.position.x, object.position.y], [object.size.x, object.size.y], 180 / Math.PI * Math.atan2(collisionNormal[1], collisionNormal[0]) + 90);
+                    var explosion = new Audio(Explosion);
+                    var explotionSize = 100 + object.size.width* object.size.height * object.speed/720
+                    new GameSprite(Images.ExplosionSprite, 5, 3, [object.position.x + 2*object.speed * object.direction.x, object.position.y + 2*object.speed * object.direction.y], [explotionSize,explotionSize], 180 / Math.PI * Math.atan2(collisionNormal[1], collisionNormal[0]) + 90);
                     setMeteorCount(meteorCount - 1);
-                    setHealth(health => Math.max(0, health - (object.speed * object.size.width * object.size.height) / 800));
+                    setHealth(health - (object.speed * object.size.width * object.size.height) / 1000);
+                    explosion.volume = (object.size.width* object.size.height * object.speed/72000);
+                    explosion.play();  
                     object.destroy();
                 })
             }
@@ -94,10 +99,10 @@ const GameScreen = () => {
 
     const createMeteor = function () {
         setMeteorCount(meteorCount + 1);
-        var size = 35 + Math.random() * 75;
+        var size = 45 + Math.random() * 75;
         var newMeteor = new GameObject([window.screen.width / 2, window.screen.height / 2], [size, size], 0, Images.Meteor, "meteor", "", true);
-        newMeteor.setDirection([-2, -1]);
-        newMeteor.speed = 0.5 + Math.random() * 3.5;
+        newMeteor.setDirection([Math.random(),Math.random()]);
+        newMeteor.speed = 0.5 + Math.random() * 4.5;
         newMeteor.applyPhysics = true;
         newMeteor.angularVelocity = newMeteor.speed;
         newMeteor.isCollidable = true;
@@ -174,7 +179,10 @@ const GameScreen = () => {
         const gameLoop = setInterval(() => {
             checkCollision();
             updateGameObjects();
-            setHealth(health => (health > 100) ? 100 : health + 0.005);
+            
+            if(health > 0)
+                setHealth(health => (health > 100) ? 100 : health + 0.005);
+            
             setTime(time => (time + 1) % 3600000);
         }, 1);
 
@@ -209,8 +217,6 @@ const GameScreen = () => {
         return () => clearInterval(moveBackground);
 
     }, []);
-
-
 
     return (
         <div className='GameScreen'
@@ -250,6 +256,8 @@ const GameScreen = () => {
                     height: scale(10),
                 }}
             />
+         
+
 
             {renderGameObjects()}
             {renderGameSprites()}

@@ -26,9 +26,9 @@ class GameSprite {
         this.image = image;
         this.xCount = xCount;
         this.yCount = yCount;
-        this.orientation = 0;
-        this.width = img.width / xCount;
-        this.height = img.height / yCount;
+        this.orientation = orientation;
+        this.width = size[0];
+        this.height = size[1];
         this.position = position;
         this.size = size;
 
@@ -58,61 +58,37 @@ class GameSprite {
             return;
         }
 
-        var p1 = this.position[0] - this.width / 2;
-        var p2 = this.position[1] - this.height / 2;
+       
         var l = Math.sqrt(Math.pow(this.width * x, 2) + Math.pow(this.height * y, 2));
         var dx = l * Math.cos(Math.PI / 2 - Math.atan2(this.width * x, this.height * y) + Math.PI / 180 * this.orientation);
         var dy = l * Math.sin(Math.PI / 2 - Math.atan2(this.width * x, this.height * y) + Math.PI / 180 * this.orientation);
         var realHeight = this.height * this.yCount;
         var realWidth = this.width * this.xCount;
-        var l2 = Math.sqrt(Math.pow(realHeight / 2, 2) + Math.pow(realWidth / 2, 2));
         var radAngle = this.orientation * Math.PI / 180;
-        var v = l2 * Math.sqrt(2 * (1 - Math.cos(radAngle)));
-        var dx2 = v * Math.cos(Math.PI / 2 - radAngle / 2 - Math.atan2(realHeight / 2, realWidth / 2));
-        var dy2 = v * Math.sin(Math.PI / 2 - radAngle / 2 - Math.atan2(realHeight / 2, realWidth / 2));
-        console.log("Or: " + l2);
+        var p1 = this.position[0] - (this.width*Math.cos(-radAngle) + this.height*Math.sin(-radAngle))/2;
+        var p2 = this.position[1] - (-this.width*Math.sin(-radAngle) + this.height*Math.cos(-radAngle))/2;
+        var dx2 =  -realWidth * (1 - Math.cos(radAngle)) / 2 - realHeight * Math.sin(radAngle) / 2;
+        var dy2 =  -realWidth * Math.sin(radAngle) / 2 + realHeight * (1 - Math.cos(radAngle)) / 2;
+
+
         return (
             <div>
-
                 <img
                     src={this.image}
-
                     style={{
-
                         position: "absolute",
                         transform: 'rotate(' + this.orientation + 'deg)',
-                        // width: this.size[0] * this.xCount,
-                        // height: this.size[1] * this.yCount,
-                        left: scale(p1 - dx - dx2), //- ax),
-                        top: scaleV(p2 - dy - dy2),// - ay),
+                        width: this.width * this.xCount,
+                        height: this.height * this.yCount,
+                        left: scale(p1 - dx + dx2),
+                        top: scaleV(p2 - dy - dy2),
                         clip: 'rect(' + (Math.round(y * this.height)) + "px," + (Math.round((x + 1) * this.width)) + "px," + (Math.round((y + 1) * this.height)) + "px," + (Math.round(x * this.width)) + "px)",
                         zIndex: 10000,
                     }}
                 />
 
-                <div
-                    style={{
-                        borderStyle: 'solid',
-                        borderWidth: 4,
-                        borderColor: "red",
-                        position: "absolute",
-                        transform: 'rotate(' + this.orientation + 'deg)',
-                        width: this.width,
-                        height: this.height,
-                        top: scaleV(this.position[1] - this.height / 2),
-                        left: scale(this.position[0] - this.width / 2),
-
-                        zIndex: 100000,
-                    }}
-                >
-
-                </div>
-
             </div >
-
         )
-
-
     }
 
 }
