@@ -46,6 +46,7 @@ class GameObject {
     image = "";
     orientation = 0;
     id = "";
+    opacity = 1.0;
     angularVelocity = 0;
     isCollidable = false;
     applyPhysics = false;
@@ -166,11 +167,19 @@ class GameObject {
 
 
     onBorderCollision(action) {
-        if (this.position.x - this.size.width / 2 < 0 - this.speed || this.position.x + this.size.width / 2 + this.speed > window.screen.width)
+        if (scale(this.position.x - this.size.width / 2) < this.speed || scale(this.position.x + this.size.width / 2) + this.speed > window.screen.width)
             action(this, "x-collision");
 
-        else if ((this.position.y - this.size.height / 2 < 0 - this.speed || this.position.y + this.size.height / 2 + this.speed > window.screen.height))
+        else if (scale(this.position.y - this.size.height / 2) < this.speed || scale(this.position.y + this.size.height / 2) + this.speed > window.screen.height)
             action(this, "y-collision");
+
+    }
+
+    outOfBounds(offset) {
+
+        if (scale(this.position.x - this.size.width / 2) <  -scale(offset) || scale(this.position.x + this.size.width / 2)  > window.screen.width + scale(offset) ||
+            scale(this.position.y - this.size.height / 2) < - scale(offset) || scale(this.position.y + this.size.height / 2) > window.screen.height + scale(offset))
+            return true;
 
     }
 
@@ -203,6 +212,7 @@ class GameObject {
                                 backgroundColor: (this.image == "") ? "grey" : "transparent",
                                 transform: "rotate(" + this.orientation + "deg)",
                                 zIndex: this.zIndex,
+                                opacity: this.opacity,
                             }
                             }
 

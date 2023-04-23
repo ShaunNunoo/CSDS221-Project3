@@ -2,15 +2,13 @@ import React, { Fragment, useState, useEffect, useRef } from 'react'
 import Images from '../../Images'
 import '../LogoScreen/LogoScreen.css'
 import LobbyTheme from '../../Sounds/LobbyTheme.mp3'
+import ButtonClick from '../../Sounds/ButtonClick.mp3'
+import ButtonHover from '../../Sounds/ButtonHover.mp3'
+import PlanetChange from '../../Sounds/PlanetChange.mp3'
 import GameObject from '../../components/GameObject'
 import { GameObjects } from '../../components/GameObject'
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Routes
-} from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+
 import './GameScreen.css';
 import { selectedPlanet } from '../ChangePlanet/ChangePlanet'
 import { gameName } from '../LogoScreen/LogoScreen'
@@ -20,21 +18,27 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import GameSprite from '../../components/GameSprite'
 import { GameSprites } from '../../components/GameSprite'
 import Explosion from '../../Sounds/Explosion.mp3'
-
+import Modal from 'react-bootstrap/Modal';
 
 var earth = new GameObject([0, 0], [500, 500], 0, selectedPlanet.planet, "planet", "", true);
 var earthSheild = new GameObject([-1000, -1000], [150, 50], 0, Images.PlanetSheild, "sheild", "", true);
-earth.isCollidable = true;
-earthSheild.isCollidable = true;
+var blackHole = new GameObject([window.screen.width / 2, window.screen.height / 2], [400, 400], 0, Images.BlackHole, "blackHole", "none", false);
+var destroyed = false;
 
-
-//var t = new GameSprite(Images.ExplosionSprite, 5, 3, [400, 500], 0, [0, 0], 0);
 const GameScreen = () => {
+    const navigate = useNavigate()
+    blackHole.opacity = 0.9;
+    earth.image = selectedPlanet.planet;
     var [backgroundX, setBackgroundX] = useState(0);
     var [backgroundY, setBackgroundY] = useState(0);
     var [time, setTime] = useState(0);
     var [meteorCount, setMeteorCount] = useState(0);
     var [health, setHealth] = useState(100);
+
+    earth.visible = !destroyed;
+    earth.isCollidable = !destroyed;
+    earthSheild.isCollidable = !destroyed;
+    earthSheild.visible = !destroyed;
 
 
     const checkCollision = function () {
@@ -47,11 +51,16 @@ const GameScreen = () => {
                 meteors.push(GameObjects[i]);
 
                 GameObjects[i].onBorderCollision((object, collisionType) => {
+
+                    if (object.outOfBounds(5))
+                        object.destroy();
+
                     if (collisionType == "x-collision")
-                        object.direction.x *= -1;
+                        object.setDirection([(0.5 + Math.random() * 0.5) * -object.direction.x, (0.5 + Math.random() * 0.5) * object.direction.y])
+
 
                     if (collisionType == "y-collision")
-                        object.direction.y *= -1;
+                        object.setDirection([(0.5 + Math.random() * 0.5) * object.direction.x, (0.5 + Math.random() * 0.5) * -object.direction.y])
 
                 });
 
@@ -88,10 +97,12 @@ const GameScreen = () => {
                     var explotionSize = 100 + object.size.width * object.size.height * object.speed / 720
                     new GameSprite(Images.ExplosionSprite, 5, 3, [object.position.x + 2 * object.speed * object.direction.x, object.position.y + 2 * object.speed * object.direction.y], [explotionSize, explotionSize], 180 / Math.PI * Math.atan2(collisionNormal[1], collisionNormal[0]) + 90);
                     setMeteorCount(meteorCount - 1);
-                    setHealth(health => health - (object.speed * object.size.width * object.size.height) / 1000);
+                    setHealth(health => health - (object.speed * object.size.width * object.size.height) / 1250);
                     explosion.volume = 0.5 * (object.size.width * object.size.height * object.speed / 72000);
                     explosion.play();
                     object.destroy();
+                    if(health <= 0)
+                        destroyed = true;
                 })
             }
 
@@ -110,7 +121,7 @@ const GameScreen = () => {
 
     }
 
-    const [mousePos, setMousePos] = useState({});
+    const [mousePos, setMousePos] = useState({ x: window.screen.width / 2, y: window.screen.height / 2 });
 
     useEffect(() => {
         const handleMouseMove = (event) => {
@@ -165,6 +176,7 @@ const GameScreen = () => {
         )
     }
 
+
     const updateGameObjects = function () {
         GameObjects.forEach(object => {
             if (object.applyPhysics) {
@@ -175,13 +187,19 @@ const GameScreen = () => {
         });
     }
 
+
+
     useEffect(() => {
         const gameLoop = setInterval(() => {
+            if (health <= 0)
+                destroyed = true;
+
             checkCollision();
             updateGameObjects();
-
-            if (health > 0)
-                setHealth(health => (health > 100) ? 100 : health + 0.005);
+            earth.setOrientation(earth.orientation + 0.01);
+            blackHole.setOrientation(blackHole.orientation - 0.5);
+            if (!destroyed)
+                setHealth(health => ((health > 100) ? 100 : health + 0.005));
 
             setTime(time => (time + 1) % 3600000);
         }, 1);
@@ -218,6 +236,59 @@ const GameScreen = () => {
 
     }, []);
 
+    const [spectateHover, setSpectateHover] = useState(false);
+    const [menuHover, setMenuHover] = useState(false);
+
+    const renderBackButotn = function () {
+        return (
+            <div>
+                <img
+
+                    style={{
+                        position: 'absolute',
+                        top: scaleV(25),
+                        left: scale(23),
+                        height: scale(50),
+                        width: scale(50),
+                        transform: "scaleX(-1)",
+                        zIndex: 100000001,
+                    }}
+                    src={Images.BackButton2}
+                />
+                <button
+
+                    onMouseEnter={() => {
+                        (new Audio(ButtonHover)).play();
+                    }}
+                    onClick={() => {
+                        (new Audio(ButtonClick)).play();
+                        navigate(-1);
+                    }}
+
+                    style={{
+                        borderWidth: 0,
+                        position: 'absolute',
+                        top: scaleV(10),
+                        left: scale(10),
+                        height: scale(80),
+                        width: scale(80),
+                        borderColor: "lightblue",
+                        backgroundColor: "transparent",
+                        borderWidth: scale(4),
+                        borderRadius: scale(100),
+                        zIndex: 100000001,
+
+
+                    }}
+
+                />
+            </div>
+
+        )
+
+    }
+
+    const [spectating, setSpectating] = useState(false)
     return (
         <div className='GameScreen'
             style={{
@@ -226,6 +297,102 @@ const GameScreen = () => {
                 backgroundPositionY: backgroundY,
             }}
         >
+            <div
+                style={{
+                    opacity: (destroyed && !spectating) ? 1 : 0
+                }}
+            >
+                <div
+                    style={{
+                        backgroundColor: "black",
+                        position: "absolute",
+                        zIndex: 100000000,
+                        opacity: (destroyed) ? 0.7 : 0,
+                        height: window.screen.height,
+                        width: window.screen.width,
+
+                    }}
+                >
+
+                </div>
+
+                <label
+                    style={{
+                        position: 'absolute',
+                        height: scale(40),
+                        width: scale(400),
+                        top: window.screen.height / 2 - scale(140),
+                        left: window.screen.width / 2 - scale(180),
+                        fontFamily: 'fantasy',
+                        fontSize: scale(80),
+                        zIndex: 100000001,
+                        color: "blue",
+                        textShadow: "10 10 #FF0000"
+                    }}
+
+                >GAME OVER</label>
+
+                <button className='PlayButton'
+                    disabled={!destroyed || spectating}
+                    style={{
+                        position: "absolute",
+                        left: window.screen.width / 2 + scale(20),
+                        top: window.screen.height / 2 + scale(0),
+                        zIndex: 100000001,
+                        width: scale(200),
+                        height: scale(60),
+                        fontSize: scale(40),
+                        color: (menuHover) ? "blueviolet" : "white",
+
+                    }}
+                    onMouseEnter={() => {
+                        setMenuHover(true);
+                    }}
+
+                    onMouseLeave={() => {
+                        setMenuHover(false);
+                    }}
+                    onClick={() => {
+                        navigate(-1);
+                    }}
+                >
+
+                    MENU
+                </button>
+
+
+                <button className='PlayButton'
+                    disabled={!destroyed || spectating}
+                    style={{
+                        position: "absolute",
+                        left: window.screen.width / 2 - scale(220),
+                        top: window.screen.height / 2 + scale(0),
+                        zIndex: 100000001,
+                        width: scale(200),
+                        height: scale(60),
+                        fontSize: scale(40),
+                        color: (spectateHover) ? "blueviolet" : "white",
+
+                    }}
+
+                    onMouseEnter={() => {
+                        setSpectateHover(true);
+                    }}
+
+                    onMouseLeave={() => {
+                        setSpectateHover(false);
+                    }}
+
+
+                    onClick={() => {
+                        setSpectating(true);
+                    }}
+                >
+
+                    SPECTATE
+                </button>
+            </div>
+
 
             <label
                 style={{
@@ -233,7 +400,7 @@ const GameScreen = () => {
                     height: scale(40),
                     width: scale(200),
                     top: scale(20),
-                    left: earth.size.width / 2 + scale(30),
+                    left: scale(earth.size.width / 2 + 30),
                     fontFamily: 'fantasy',
                     fontSize: scale(20),
                     zIndex: 10000,
@@ -243,7 +410,7 @@ const GameScreen = () => {
 
             <ProgressBar
                 variant={(health > 50) ? "success" : (health < 20) ? "danger" : "warning"}
-                now={health}
+                now={Math.max(0, health)}
                 style={{
                     position: 'absolute',
                     top: scaleV(10),
@@ -257,8 +424,8 @@ const GameScreen = () => {
                 }}
             />
 
-
-
+            {spectating && renderBackButotn()}
+            {blackHole.render()}
             {renderGameObjects()}
             {renderGameSprites()}
         </div>

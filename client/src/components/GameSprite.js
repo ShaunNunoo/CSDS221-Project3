@@ -78,11 +78,11 @@ class GameSprite {
                     style={{
                         position: "absolute",
                         transform: 'rotate(' + this.orientation + 'deg)',
-                        width: this.width * this.xCount,
-                        height: this.height * this.yCount,
+                        width: scale(this.width * this.xCount),
+                        height: scale(this.height * this.yCount),
                         left: scale(p1 - dx + dx2),
                         top: scaleV(p2 - dy - dy2),
-                        clip: 'rect(' + (Math.round(y * this.height)) + "px," + (Math.round((x + 1) * this.width)) + "px," + (Math.round((y + 1) * this.height)) + "px," + (Math.round(x * this.width)) + "px)",
+                        clip: 'rect(' + scale(Math.round(y * this.height)) + "px," + scale(Math.round((x + 1) * this.width)) + "px," + scale(Math.round((y + 1) * this.height)) + "px," + scale(Math.round(x * this.width)) + "px)",
                         zIndex: 10000,
                     }}
                 />

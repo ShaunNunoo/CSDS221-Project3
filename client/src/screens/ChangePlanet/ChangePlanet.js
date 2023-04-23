@@ -6,7 +6,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { scale, scaleH, scaleV } from '../../App'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-
+import ButtonClick from '../../Sounds/ButtonClick.mp3'
+import ButtonHover from '../../Sounds/ButtonHover.mp3'
+import PlanetChange from '../../Sounds/PlanetChange.mp3'
 const planets = [
     {
         name: "Mercury",
@@ -121,7 +123,12 @@ const ChangePlanet = () => {
                 {selectedPlanet.name}
             </label>
             <button
+
+                onMouseEnter={() => {
+                    (new Audio(ButtonHover)).play();
+                }}
                 onClick={() => {
+                    (new Audio(ButtonClick)).play();
                     navigate(-1);
                 }}
 
@@ -166,14 +173,19 @@ const ChangePlanet = () => {
             </div>
 
             <button
-
+                onMouseEnter={() => {
+                    (new Audio(ButtonHover)).play();
+                }}
                 onClick={() => {
+
                     if (planetSelect > 0 && planets[planetSelect - 1].image != null) {
                         setPlanetSelect(planetSelect - 1);
                         selectedPlanet = planets[planetSelect - 1];
+                        (new Audio(PlanetChange)).play();
                     } else if (planets[planets.length - 1].image != null) {
                         setPlanetSelect(planets.length - 1);
                         selectedPlanet = planets[planets.length - 1];
+                        (new Audio(PlanetChange)).play();
                     }
                 }}
 
@@ -311,15 +323,19 @@ const ChangePlanet = () => {
             </div>
 
             <button
-
+                onMouseEnter={() => {
+                    (new Audio(ButtonHover)).play();
+                }}
                 onClick={() => {
 
                     if (planetSelect < planets.length && planets[planetSelect + 1].image != null) {
                         setPlanetSelect(planetSelect + 1);
                         selectedPlanet = planets[planetSelect + 1];
+                        (new Audio(PlanetChange)).play();
                     } else if (planets[0].image != null) {
                         setPlanetSelect(0);
                         selectedPlanet = planets[0];
+                        (new Audio(PlanetChange)).play();
                     }
                 }}
 

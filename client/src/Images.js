@@ -15,4 +15,5 @@ export default {
     Jupiter: require("./Images/Jupiter.png"),
     Venus: require("./Images/Venus.png"),
     ExplosionSprite: require("./Images/ExplosionSprite.png"),
+    BlackHole: require("./Images/BlackHole.png"),
 }

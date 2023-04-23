@@ -8,6 +8,9 @@ import { selectedPlanet } from '../ChangePlanet/ChangePlanet';
 import GameObject from '../../components/GameObject';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
+import ButtonClick from '../../Sounds/ButtonClick.mp3'
+import ButtonHover from '../../Sounds/ButtonHover.mp3'
+import PlanetChange from '../../Sounds/PlanetChange.mp3'
 var screen = "logo"
 var music = new Audio(LobbyTheme);
 var earthSheild = new GameObject([500, 500], [225, 75], 0, Images.PlanetSheild, "none", "", false);
@@ -73,7 +76,7 @@ const LogoScreen = () => {
     useEffect(() => {
 
         earthSheild.setOrientation(Math.atan2(mousePos.y - window.screen.height, mousePos.x) * 180 / Math.PI + 90);
-        earthSheild.setPosition(scale(550 * Math.cos(Math.atan2(window.screen.height - mousePos.y, mousePos.x))), window.screen.height - scale(550 * Math.sin(Math.atan2(window.screen.height - mousePos.y, mousePos.x))));
+        earthSheild.setPosition(550* Math.cos(Math.atan2(window.screen.height - mousePos.y, mousePos.x)), window.screen.height - scaleV(550) * Math.sin(Math.atan2(window.screen.height - mousePos.y, mousePos.x)));
     }, [mousePos.x, mousePos.y]);
 
 
@@ -96,7 +99,13 @@ const LogoScreen = () => {
                 />
 
                 <button
+
+                    onMouseEnter={()=>{
+                        (new Audio(ButtonHover)).play();
+                    }}
+
                     onClick={() => {
+                        (new Audio(ButtonClick)).play();
                         screen = "menu";
                     }}
 
@@ -118,8 +127,11 @@ const LogoScreen = () => {
                 />
 
                 <button
-
+                    onMouseEnter={()=>{
+                        (new Audio(ButtonHover)).play();
+                    }}
                     onClick={() => {
+                        (new Audio(ButtonClick)).play();
                         if (playersCount < 4)
                             setPLayersCount(playersCount + 1)
                     }}
@@ -137,8 +149,11 @@ const LogoScreen = () => {
                 />
 
                 <button
-
+                    onMouseEnter={()=>{
+                        (new Audio(ButtonHover)).play();
+                    }}
                     onClick={() => {
+                        (new Audio(ButtonClick)).play();
                         if (playersCount > 2)
                             setPLayersCount(playersCount - 1)
                     }}
@@ -241,6 +256,9 @@ const LogoScreen = () => {
 
                 <button className='PlayButton'
                     disabled={name == ""}
+                    onMouseEnter={()=>{
+                        (new Audio(ButtonHover)).play();
+                    }}
                     style={{
                         left: window.screen.width / 2 - scale(100),
                         top: window.screen.height / 2 + scale(105),
@@ -251,6 +269,7 @@ const LogoScreen = () => {
 
                     }}
                     onClick={() => {
+                        (new Audio(ButtonClick)).play();
                         navigate('GameScreen');
                     }}
                 >
@@ -295,8 +314,14 @@ const LogoScreen = () => {
 
                     }}
                     onClick={() => {
+                        (new Audio(ButtonClick)).play();
                         screen = "menu";
                     }}
+
+                    onMouseEnter={()=>{
+                        (new Audio(ButtonHover)).play();
+                    }}
+                    
                 >
 
                     PLAY
@@ -352,10 +377,12 @@ const LogoScreen = () => {
                             alignSelf: "center"
                         }}
                         onMouseOver={() => {
+                            (new Audio(ButtonHover)).play();
                             setHoverSolo(true);
                         }}
 
                         onMouseLeave={() => {
+                           
                             setHoverSolo(false);
                         }}
 
@@ -379,6 +406,7 @@ const LogoScreen = () => {
 
                     <label
                         onClick={() => {
+                             (new Audio(ButtonClick)).play();
                             setHoverMP(false);
                             screen = "queue";
 
@@ -388,6 +416,7 @@ const LogoScreen = () => {
                             alignSelf: "center"
                         }}
                         onMouseOver={() => {
+                            (new Audio(ButtonHover)).play();
                             setHoverMP(true);
                         }}
 
@@ -419,6 +448,7 @@ const LogoScreen = () => {
                             alignSelf: "center"
                         }}
                         onMouseOver={() => {
+                            (new Audio(ButtonHover)).play();
                             setHoverCP(true);
                         }}
 
@@ -427,6 +457,7 @@ const LogoScreen = () => {
                         }}
 
                         onClick={() => {
+                            (new Audio(ButtonClick)).play();
                             navigate('ChangePlanetScreen');
                         }}
 
