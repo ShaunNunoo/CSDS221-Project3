@@ -99,6 +99,11 @@ class GameObject {
         this.position.y = y;
     }
 
+    setSize(size) {
+        this.size.width = size[0];
+        this.size.height = size[1];
+    }
+
     setDirection(direction) {
         var magnitude = Math.sqrt(Math.pow(direction[0], 2) + Math.pow(direction[1], 2));
         this.direction.x = direction[0] / magnitude;
@@ -177,7 +182,7 @@ class GameObject {
 
     outOfBounds(offset) {
 
-        if (scale(this.position.x - this.size.width / 2) <  -scale(offset) || scale(this.position.x + this.size.width / 2)  > window.screen.width + scale(offset) ||
+        if (scale(this.position.x - this.size.width / 2) < -scale(offset) || scale(this.position.x + this.size.width / 2) > window.screen.width + scale(offset) ||
             scale(this.position.y - this.size.height / 2) < - scale(offset) || scale(this.position.y + this.size.height / 2) > window.screen.height + scale(offset))
             return true;
 

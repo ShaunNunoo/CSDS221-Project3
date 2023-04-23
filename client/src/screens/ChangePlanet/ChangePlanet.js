@@ -40,7 +40,7 @@ const planets = [
     {
         name: "Mars",
         stats: {
-            strength: 50,
+            strength: 20,
             defence: 80
         },
         image: Images.MarsBackground,
@@ -51,7 +51,7 @@ const planets = [
         name: "Jupiter",
         stats: {
             strength: 90,
-            defence: 30
+            defence: 40
         },
         image: Images.JupiterBackground,
         planet: Images.Jupiter,

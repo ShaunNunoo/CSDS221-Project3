@@ -19,26 +19,25 @@ import GameSprite from '../../components/GameSprite'
 import { GameSprites } from '../../components/GameSprite'
 import Explosion from '../../Sounds/Explosion.mp3'
 import Modal from 'react-bootstrap/Modal';
-
+import { music } from '../LogoScreen/LogoScreen'
 var earth = new GameObject([0, 0], [500, 500], 0, selectedPlanet.planet, "planet", "", true);
-var earthSheild = new GameObject([-1000, -1000], [150, 50], 0, Images.PlanetSheild, "sheild", "", true);
+var earthSheild = new GameObject([-1000, -1000], [selectedPlanet.stats.defence / 100 * 225, selectedPlanet.stats.defence / 100 * 75], 0, Images.PlanetSheild, "sheild", "", true);
 var blackHole = new GameObject([window.screen.width / 2, window.screen.height / 2], [400, 400], 0, Images.BlackHole, "blackHole", "none", false);
 var destroyed = false;
 
 const GameScreen = () => {
+    music.play();
     const navigate = useNavigate()
     blackHole.opacity = 0.9;
     earth.image = selectedPlanet.planet;
+    earthSheild.setSize([20 + selectedPlanet.stats.defence / 100 * 225, 10 + selectedPlanet.stats.defence / 100 * 75]);
     var [backgroundX, setBackgroundX] = useState(0);
     var [backgroundY, setBackgroundY] = useState(0);
     var [time, setTime] = useState(0);
     var [meteorCount, setMeteorCount] = useState(0);
     var [health, setHealth] = useState(100);
 
-    earth.visible = !destroyed;
-    earth.isCollidable = !destroyed;
-    earthSheild.isCollidable = !destroyed;
-    earthSheild.visible = !destroyed;
+
 
 
     const checkCollision = function () {
@@ -52,9 +51,6 @@ const GameScreen = () => {
 
                 GameObjects[i].onBorderCollision((object, collisionType) => {
 
-                    if (object.outOfBounds(5))
-                        object.destroy();
-
                     if (collisionType == "x-collision")
                         object.setDirection([(0.5 + Math.random() * 0.5) * -object.direction.x, (0.5 + Math.random() * 0.5) * object.direction.y])
 
@@ -62,6 +58,8 @@ const GameScreen = () => {
                     if (collisionType == "y-collision")
                         object.setDirection([(0.5 + Math.random() * 0.5) * object.direction.x, (0.5 + Math.random() * 0.5) * -object.direction.y])
 
+                    if (object.outOfBounds(5))
+                        object.destroy();
                 });
 
 
@@ -97,11 +95,11 @@ const GameScreen = () => {
                     var explotionSize = 100 + object.size.width * object.size.height * object.speed / 720
                     new GameSprite(Images.ExplosionSprite, 5, 3, [object.position.x + 2 * object.speed * object.direction.x, object.position.y + 2 * object.speed * object.direction.y], [explotionSize, explotionSize], 180 / Math.PI * Math.atan2(collisionNormal[1], collisionNormal[0]) + 90);
                     setMeteorCount(meteorCount - 1);
-                    setHealth(health => health - (object.speed * object.size.width * object.size.height) / 1250);
+                    setHealth(health -= (object.speed * (65 - selectedPlanet.stats.strength / 100 * 40) * object.size.width * object.size.height) / 72000);
                     explosion.volume = 0.5 * (object.size.width * object.size.height * object.speed / 72000);
                     explosion.play();
                     object.destroy();
-                    if(health <= 0)
+                    if (health <= 0)
                         destroyed = true;
                 })
             }
@@ -191,15 +189,20 @@ const GameScreen = () => {
 
     useEffect(() => {
         const gameLoop = setInterval(() => {
-            if (health <= 0)
-                destroyed = true;
+            if (!destroyed)
+                destroyed = (health <= 0);
+
+            earth.visible = !destroyed;
+            earth.isCollidable = !destroyed;
+            earthSheild.isCollidable = !destroyed;
+            earthSheild.visible = !destroyed;
 
             checkCollision();
             updateGameObjects();
             earth.setOrientation(earth.orientation + 0.01);
             blackHole.setOrientation(blackHole.orientation - 0.5);
-            if (!destroyed)
-                setHealth(health => ((health > 100) ? 100 : health + 0.005));
+            if (!destroyed && health <= 100)
+                setHealth(health = ((health > 100) ? 100 : health + selectedPlanet.stats.defence / 100 * 0.01));
 
             setTime(time => (time + 1) % 3600000);
         }, 1);
@@ -408,9 +411,11 @@ const GameScreen = () => {
                 }}
             >{gameName}</label>
 
-            <ProgressBar
-                variant={(health > 50) ? "success" : (health < 20) ? "danger" : "warning"}
+            {!destroyed && <ProgressBar
+                variant={(health > 50) ? "success" : (health < 25) ? "danger" : "warning"}
                 now={Math.max(0, health)}
+                speed={100}
+                label={`${Math.round(health)}%`}
                 style={{
                     position: 'absolute',
                     top: scaleV(10),
@@ -422,7 +427,7 @@ const GameScreen = () => {
                     zIndex: 100000,
                     height: scale(10),
                 }}
-            />
+            />}
 
             {spectating && renderBackButotn()}
             {blackHole.render()}
