@@ -11,15 +11,74 @@ import Form from 'react-bootstrap/Form';
 import ButtonClick from '../../Sounds/ButtonClick.mp3'
 import ButtonHover from '../../Sounds/ButtonHover.mp3'
 import PlanetChange from '../../Sounds/PlanetChange.mp3'
-var screen = "logo"
+import { UUID } from '../../App';
 var music = new Audio(LobbyTheme);
 var earthSheild = new GameObject([500, 500], [225, 75], 0, Images.PlanetSheild, "none", "", false);
 var planet = new GameObject([0, window.screen.height], [1000, 1000], 0, selectedPlanet.planet, "none", "", false);
 var planetAngle = 0;
 var gameName = ""
-music.play();
+var screen;
+
+
+
 
 const LogoScreen = () => {
+    try {
+        music.play();
+    } catch (error) {
+
+    }
+
+    const pageAccessedByReload = (
+        (window.performance.navigation && window.performance.navigation.type === 1) ||
+        window.performance
+            .getEntriesByType('navigation')
+            .map((nav) => nav.type)
+            .includes('reload')
+    );
+
+    var [lobbyState, setLobbyState] = useState("");
+
+    function removeUser() {
+        fetch('/removeUserID', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ UUID: UUID })
+        })
+    }
+
+    function setScreen(state) {
+
+        fetch('/setScreen', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ UUID: UUID, data: state })
+        });
+
+
+    }
+
+    function updateLobbyState() {
+
+        fetch('/getScreen', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ UUID: UUID })
+        }).then(async response => await response.json())
+            .then(async data => {
+                setLobbyState(data);
+            })
+    }
+
+
+
+
     const navigate = useNavigate();
     var [name, setName] = useState("");
     var [playersCount, setPLayersCount] = useState(4);
@@ -79,7 +138,10 @@ const LogoScreen = () => {
         earthSheild.setPosition(550 * Math.cos(Math.atan2(window.screen.height - mousePos.y, mousePos.x)), window.screen.height - scaleV(550) * Math.sin(Math.atan2(window.screen.height - mousePos.y, mousePos.x)));
     }, [mousePos.x, mousePos.y]);
 
-
+    useEffect(() => {
+        if (lobbyState != "logo")
+            updateLobbyState();
+    }, [UUID])
 
     const displayQueueScreen = function () {
 
@@ -102,7 +164,8 @@ const LogoScreen = () => {
 
                     onClick={() => {
                         (new Audio(ButtonHover)).play();
-                        screen = "menu";
+                        setScreen("menu");
+                        updateLobbyState();
                     }}
 
                     style={{
@@ -246,9 +309,7 @@ const LogoScreen = () => {
 
                 <button className='PlayButton'
                     disabled={name == ""}
-                    onMouseEnter={() => {
-                        (new Audio(ButtonHover)).play();
-                    }}
+
                     style={{
                         left: window.screen.width / 2 - scale(100),
                         top: window.screen.height / 2 + scale(105),
@@ -259,7 +320,7 @@ const LogoScreen = () => {
 
                     }}
                     onClick={() => {
-                        (new Audio(ButtonClick)).play();
+                        (new Audio(ButtonHover)).play();
                         navigate('GameScreen');
                     }}
                 >
@@ -305,9 +366,9 @@ const LogoScreen = () => {
                     }}
                     onClick={() => {
                         (new Audio(ButtonHover)).play();
-                        screen = "menu";
+                        setScreen("menu");
+                            updateLobbyState();
                     }}
-
 
                 >
 
@@ -395,7 +456,8 @@ const LogoScreen = () => {
                         onClick={() => {
                             (new Audio(ButtonHover)).play();
                             setHoverMP(false);
-                            screen = "queue";
+                            setScreen("queue");
+                            updateLobbyState();
 
                         }}
                         style={{
@@ -446,6 +508,7 @@ const LogoScreen = () => {
                         onClick={() => {
                             (new Audio(ButtonHover)).play();
                             navigate('ChangePlanetScreen');
+        
                         }}
 
                     >
@@ -482,12 +545,12 @@ const LogoScreen = () => {
             style={{
                 backgroundPositionX: backgroundX,
                 backgroundPositionY: backgroundY,
+                color: "red"
             }}
-        >
-            {(screen == "logo") && displayLogo()}
-            {(screen == "menu") && displayMenu()}
-            {(screen == "queue") && displayQueueScreen()}
-
+        >   
+            {(lobbyState == "logo") && displayLogo()}
+            {(lobbyState == "menu") && displayMenu()}
+            {(lobbyState == "queue") && displayQueueScreen()}
 
         </div>
     );

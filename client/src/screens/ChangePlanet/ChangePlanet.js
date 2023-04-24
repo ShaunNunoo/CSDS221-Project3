@@ -124,11 +124,9 @@ const ChangePlanet = () => {
             </label>
             <button
 
-                onMouseEnter={() => {
-                    (new Audio(ButtonHover)).play();
-                }}
+     
                 onClick={() => {
-                    (new Audio(ButtonClick)).play();
+                    (new Audio(ButtonHover)).play();
                     navigate(-1);
                 }}
 
@@ -173,9 +171,7 @@ const ChangePlanet = () => {
             </div>
 
             <button
-                onMouseEnter={() => {
-                    (new Audio(ButtonHover)).play();
-                }}
+        
                 onClick={() => {
 
                     if (planetSelect > 0 && planets[planetSelect - 1].image != null) {
@@ -323,9 +319,7 @@ const ChangePlanet = () => {
             </div>
 
             <button
-                onMouseEnter={() => {
-                    (new Audio(ButtonHover)).play();
-                }}
+
                 onClick={() => {
 
                     if (planetSelect < planets.length && planets[planetSelect + 1].image != null) {
