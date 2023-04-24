@@ -6,7 +6,7 @@ const app = express()
 
 app.use(express.json());
 app.use(bodyParser.json());
-//app.use(express.static('public'));
+app.use(express.static('public'));
 
 var addresses = [];
 var users = [];
@@ -42,12 +42,11 @@ app.post('/userID', (req, res) => {
     var UUID = req.body.UUID;
     if (UUID == "") {
         UUID = uuidv4();
-        addresses.push(UUID);
         res.json(UUID);
     }
-    
-    if (!addresses.includes(UUID)) {
 
+    if (!addresses.includes(UUID)) {
+        addresses.push(UUID);
         users.push(
             {
                 id: UUID,

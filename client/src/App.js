@@ -13,24 +13,25 @@ function App() {
   if (sessionStorage.getItem("GameID") == null)
     window.location.reload();
 
-  
-    fetch('/userID', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ UUID: (sessionStorage.getItem("GameID") == null) ? "" : sessionStorage.getItem("GameID") })
+
+  fetch('/userID', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ UUID: (sessionStorage.getItem("GameID") == null) ? "" : sessionStorage.getItem("GameID") })
+  })
+    .then(async response => await response.json())
+    .then(async data => {
+      console.log("Reached: " + data)
+      if (sessionStorage.getItem("GameID") == null)
+        sessionStorage.setItem("GameID", await data)
     })
-      .then(async response => await response.json())
-      .then(async data => {
-        console.log("Reached: " + data)
-        if (sessionStorage.getItem("GameID") == null)
-          sessionStorage.setItem("GameID", await data)
-      })
-    
+
 
   return (
     <Router>
+
       <div className='App'>
         <Routes>
           <Route path="/" element={<LogoScreen />} />
