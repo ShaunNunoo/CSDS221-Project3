@@ -12,8 +12,9 @@ html{
 }
 
 body{
-    overflow: hidden;
+    overflow: auto;
     user-zoom: fixed;
+    height: 100%;
 }
 
 img {

@@ -4,25 +4,34 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import GameScreen from './screens/GameScreen/GameScreen';
 import LogoScreen from './screens/LogoScreen/LogoScreen'
 import ChangePlanet from './screens/ChangePlanet/ChangePlanet';
-import Cookies from 'js-cookie';
 
-function App() {
-  
-  if(Cookies.get("GameID") == "")
+sessionStorage.setItem("refreshCount", 0);
+
+
+if (sessionStorage.getItem("GameID") == null)
   fetch('/userID', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({UUID: UUID})
+    body: JSON.stringify({ UUID: "" })
   })
     .then(async response => await response.json())
-    .then(async data =>  {
-       Cookies.set('GameID', await data, { expires: 0 });
+    .then(async data => {
+      console.log("Reached: " + data)
+      sessionStorage.setItem("GameID", await data)
     })
 
+
+function App() {
+
+  if (sessionStorage.getItem("GameID") == null)
+    window.location.reload();
+
+
+
   return (
-  <Router>
+    <Router>
       <div className='App'>
         <Routes>
           <Route path="/" element={<LogoScreen />} />
@@ -47,7 +56,19 @@ const scaleH = function (val) {
 const scale = function (val) {
   return val * Math.min(window.screen.height, window.screen.width) / 863;
 }
-var UUID = Cookies.get("GameID")
+const UUID = sessionStorage.getItem("GameID")
+
+window.onunload  = function () {
+
+  fetch('/removeUserID', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ UUID: UUID })
+  })
+}
+
 export {
   scale,
   scaleH,

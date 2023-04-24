@@ -21,7 +21,6 @@ var screen;
 
 
 
-
 const LogoScreen = () => {
     try {
         music.play();
