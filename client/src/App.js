@@ -5,22 +5,7 @@ import GameScreen from './screens/GameScreen/GameScreen';
 import LogoScreen from './screens/LogoScreen/LogoScreen'
 import ChangePlanet from './screens/ChangePlanet/ChangePlanet';
 
-sessionStorage.setItem("refreshCount", 0);
 
-
-if (sessionStorage.getItem("GameID") == null)
-  fetch('/userID', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ UUID: "" })
-  })
-    .then(async response => await response.json())
-    .then(async data => {
-      console.log("Reached: " + data)
-      sessionStorage.setItem("GameID", await data)
-    })
 
 
 function App() {
@@ -28,7 +13,21 @@ function App() {
   if (sessionStorage.getItem("GameID") == null)
     window.location.reload();
 
-
+  
+    fetch('/userID', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ UUID: (sessionStorage.getItem("GameID") == null) ? "" : sessionStorage.getItem("GameID") })
+    })
+      .then(async response => await response.json())
+      .then(async data => {
+        console.log("Reached: " + data)
+        if (sessionStorage.getItem("GameID") == null)
+          sessionStorage.setItem("GameID", await data)
+      })
+    
 
   return (
     <Router>
@@ -56,18 +55,7 @@ const scaleH = function (val) {
 const scale = function (val) {
   return val * Math.min(window.screen.height, window.screen.width) / 863;
 }
-const UUID = sessionStorage.getItem("GameID")
-
-window.onunload  = function () {
-
-  fetch('/removeUserID', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ UUID: UUID })
-  })
-}
+var UUID = sessionStorage.getItem("GameID")
 
 export {
   scale,

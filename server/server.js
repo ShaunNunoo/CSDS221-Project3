@@ -6,7 +6,7 @@ const app = express()
 
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(express.static('public'));
+//app.use(express.static('public'));
 
 var addresses = [];
 var users = [];
@@ -16,17 +16,43 @@ app.post('/removeUserID', (req, res) => {
     res.send(req.body.UUID);
 });
 
+app.post('/changePlanet', (req, res) => {
+    const UUID = req.body.UUID;
+    const user = users.find(user => user.id == UUID);
+    user.selectedPlanet = req.body.planet;
+});
+
+
+app.post('/getPlanet', (req, res) => {
+    const UUID = req.body.UUID;
+    const user = users.find(user => user.id == UUID);
+    res.json(user.selectedPlanet);
+});
+
+app.post('/setQueue', (req, res) => {
+    const UUID = req.body.UUID;
+    const user = users.find(user => user.id == UUID);
+    user.name = req.body.name;
+    user.gameSize = req.body.gameSize;
+    user.gameSize = req.body.gameSize;
+});
+
 app.post('/userID', (req, res) => {
 
-    const UUID = req.body.UUID;
+    var UUID = req.body.UUID;
+    if (UUID == "") {
+        UUID = uuidv4();
+        addresses.push(UUID);
+        res.json(UUID);
+    }
+    
+    if (!addresses.includes(UUID)) {
 
-    if (UUID == "" || !addresses.includes(UUID)) {
-        const newUUID = uuidv4();
         users.push(
             {
-                id: newUUID,
+                id: UUID,
                 name: "",
-                selectedPlanet: "Earth",
+                selectedPlanet: 2,
                 gameSize: 4,
                 screen: "logo",
                 gameData: {
@@ -34,8 +60,7 @@ app.post('/userID', (req, res) => {
                     health: 100
                 },
             });
-        addresses.push(newUUID);
-        res.json(newUUID);
+
     }
 
 });
@@ -46,7 +71,7 @@ app.post('/setScreen', (req, res) => {
     const user = users.find(user => user.id == UUID);
     user.screen = req.body.data;
 
- 
+
 });
 
 
@@ -54,7 +79,7 @@ app.post('/getScreen', (req, res) => {
     const UUID = req.body.UUID;
     const user = users.find(user => user.id == UUID);
     res.json(user.screen);
- 
+
 });
 
 
@@ -64,5 +89,5 @@ app.get('/', (req, res) => {
 });
 
 
-
 app.listen(5000, () => { console.log("Server started on port 5000") })
+
