@@ -12,9 +12,12 @@ music.loop = true;
 const screenWidth = Math.max( window.screen.width, window.screen.height);
 const screenHeight = Math.min( window.screen.width, window.screen.height);
 
+if (sessionStorage.getItem("screen") == null)
+  sessionStorage.setItem("screen", "logo")
 
 if (sessionStorage.getItem("selectedPlanet") == null)
   sessionStorage.setItem("selectedPlanet", 2)
+
 
 function App() {
 
@@ -27,11 +30,11 @@ function App() {
   }
   })
 
-  if (sessionStorage.getItem("GameID") == null)
-    window.location.reload();
+/*  if (sessionStorage.getItem("GameID") == null)
+    window.location.reload();*/
 
 
-  fetch('/userID', {
+ /* fetch('/userID', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -44,7 +47,7 @@ function App() {
       if (sessionStorage.getItem("GameID") == null)
         sessionStorage.setItem("GameID", await data)
     })
-
+*/
 
   return (
     <Router>
@@ -78,13 +81,13 @@ const scaleH = function (val) {
 const scale = function (val) {
   return val * screenHeight / 863;
 }
-var UUID = sessionStorage.getItem("GameID")
+//var UUID = sessionStorage.getItem("GameID")
 
 export {
   scale,
   scaleH,
   scaleV,
-  UUID,
+  //UUID,
   screenHeight,
   screenWidth,
   music

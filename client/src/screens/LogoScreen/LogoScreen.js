@@ -10,7 +10,6 @@ import Form from 'react-bootstrap/Form';
 import ButtonClick from '../../Sounds/ButtonClick.mp3'
 import ButtonHover from '../../Sounds/ButtonHover.mp3'
 import PlanetChange from '../../Sounds/PlanetChange.mp3'
-import { UUID } from '../../App';
 
 const screenWidth = 1535;
 const screenHeight = 863;
@@ -50,8 +49,9 @@ const LogoScreen = () => {
     var [lobbyState, setLobbyState] = useState("");
 
 
-    function setScreen(state, tryCount) {
-        var fetched = false;
+    function setScreen(state) {
+        sessionStorage.setItem("screen", state);
+        /*var fetched = false;
         fetch('/setScreen', {
             method: 'POST',
             headers: {
@@ -63,13 +63,13 @@ const LogoScreen = () => {
             .then(async data => {
                 fetched = await data;
             });
-
+*/
 
     }
 
     function updateLobbyState() {
 
-        fetch('/getScreen', {
+     /*   fetch('/getScreen', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -79,7 +79,9 @@ const LogoScreen = () => {
             .then(async response => await response.json())
             .then(async data => {
                 setLobbyState(await data);
-            })
+            })*/
+
+            setLobbyState(sessionStorage.getItem("screen"));
     }
 
 
@@ -129,7 +131,6 @@ const LogoScreen = () => {
 
     useEffect(() => {
         planet.image = getPlanet(planetNum).planet;
-        console.log(planetNum + ", " + getPlanet(planetNum).planet)
     })
 
 
