@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Images from '../../Images'
 import '../LogoScreen/LogoScreen.css'
-import { Navigate, useNavigate } from "react-router-dom";
-import { scale, scaleH, scaleV, screenHeight, screenWidth } from '../../App'
+import {useNavigate } from "react-router-dom";
+import { scale, scaleV, screenHeight, screenWidth } from '../../App'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import ButtonClick from '../../Sounds/ButtonClick.mp3'
 import ButtonHover from '../../Sounds/ButtonHover.mp3'
 import PlanetChange from '../../Sounds/PlanetChange.mp3'
 import { getPlanet } from '../LogoScreen/LogoScreen';
-import Planets from '../../components/Planets';
 
 var planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
 const ChangePlanet = () => {

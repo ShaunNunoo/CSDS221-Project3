@@ -1,7 +1,6 @@
 import './App.css'
-import React, { useState, useEffect } from 'react'
+import React, {useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import GameScreen from './screens/GameScreen/GameScreen';
 import LogoScreen from './screens/LogoScreen/LogoScreen'
 import ChangePlanet from './screens/ChangePlanet/ChangePlanet';
 import SoloGameScreen from './screens/SoloGameScreen/SoloGameScreen';
@@ -30,24 +29,6 @@ function App() {
   }
   })
 
-/*  if (sessionStorage.getItem("GameID") == null)
-    window.location.reload();*/
-
-
- /* fetch('/userID', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ UUID: (sessionStorage.getItem("GameID") == null) ? "" : sessionStorage.getItem("GameID") })
-  })
-    .then(async response => await response.json())
-    .then(async data => {
-      console.log("Reached: " + data)
-      if (sessionStorage.getItem("GameID") == null)
-        sessionStorage.setItem("GameID", await data)
-    })
-*/
 
   return (
     <Router>
@@ -58,7 +39,6 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<LogoScreen />} />
-          <Route path="/GameScreen" element={<GameScreen />} />
           <Route path="/SoloGameScreen" element={<SoloGameScreen />} />
           <Route path="/ChangePlanetScreen" element={<ChangePlanet />} />
         </Routes>

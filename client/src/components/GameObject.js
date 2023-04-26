@@ -1,5 +1,4 @@
-import React, { Component, useState, useEffect } from 'react'
-import Images from '../Images';
+
 import {scale, scaleH, scaleV, screenHeight, screenWidth } from '../App';
 var GameObjects = [];
 
