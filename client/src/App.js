@@ -13,12 +13,11 @@ function App() {
   return (
       <div className='App'
         style={{
-          backgroundColor: "black"
+          backgroundColor: "black",
+          color: "red"
         }}
       >
-       <img
-        src={Images.GameLogo}
-       />
+       HWLLO QORLD
       </div>
   );
 }
