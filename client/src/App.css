@@ -1,7 +1,8 @@
 
 
-html{
-
+html, body{
+    margin: 0; 
+    height: 100%;
     overflow: hidden;
     user-select: none;
     -moz-user-select: none;
@@ -11,11 +12,7 @@ html{
 
 }
 
-body{
-    overflow: auto;
-    user-zoom: fixed;
-    height: 100%;
-}
+
 
 img {
     pointer-events: none;

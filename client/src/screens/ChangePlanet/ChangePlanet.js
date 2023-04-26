@@ -1,117 +1,49 @@
 import React, { useState, useEffect } from 'react'
 import Images from '../../Images'
 import '../LogoScreen/LogoScreen.css'
-import LobbyTheme from '../../Sounds/LobbyTheme.mp3'
 import { Navigate, useNavigate } from "react-router-dom";
-import { scale, scaleH, scaleV } from '../../App'
+import { scale, scaleH, scaleV, screenHeight, screenWidth } from '../../App'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import ButtonClick from '../../Sounds/ButtonClick.mp3'
 import ButtonHover from '../../Sounds/ButtonHover.mp3'
 import PlanetChange from '../../Sounds/PlanetChange.mp3'
-const planets = [
-    {
-        name: "Mercury",
-        stats: {},
-        image: null,
-        planet: null,
-    },
+import { getPlanet } from '../LogoScreen/LogoScreen';
+import Planets from '../../components/Planets';
 
-    {
-        name: "Venus",
-        stats: {
-            strength: 70,
-            defence: 50
-        },
-        image: Images.VenusBackground,
-        planet: Images.Venus,
-    },
-
-    {
-        name: "Earth",
-        stats: {
-            strength: 60,
-            defence: 70
-        },
-        image: Images.EarthBackground,
-        planet: Images.Earth,
-    },
-
-    {
-        name: "Mars",
-        stats: {
-            strength: 20,
-            defence: 80
-        },
-        image: Images.MarsBackground,
-        planet: Images.Mars,
-    },
-
-    {
-        name: "Jupiter",
-        stats: {
-            strength: 90,
-            defence: 40
-        },
-        image: Images.JupiterBackground,
-        planet: Images.Jupiter,
-    },
-
-    {
-        name: "Saturn",
-        stats: {
-            strength: 50,
-            defence: 60
-        },
-        image: null,
-        planet: null,
-    },
-
-    {
-        name: "Uranus",
-        stats: {},
-        image: null,
-        planet: null,
-    },
-
-    {
-        name: "Neptune",
-        stats: {},
-        image: null,
-        planet: null,
-    },
-
-    {
-        name: "Pluto",
-        stats: {},
-        image: null,
-        planet: null,
-    },
-
-
-]
-
-var selectedPlanet = planets[2];
-
-
+var planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
 const ChangePlanet = () => {
-    const [planetSelect, setPlanetSelect] = useState(planets.indexOf(selectedPlanet));
 
-    const navigate = useNavigate()
+    var [selectNum, setSelectNum] = useState(planetNum);
+
+    const navigate = useNavigate();
+    
     return (
         <div
             style={{
-                height: window.screen.height,
-                width: window.screen.width,
+                height: screenHeight,
+                width: screenWidth,
                 backgroundColor: "black",
-                backgroundImage: `url(${planets[planetSelect].image})`,
+                backgroundImage: `url(${getPlanet(selectNum).image})`,
                 backgroundSize: "cover",
             }}
         >
+            <img
+                    src={Images.GameLogo}
+                    style={{
+                        left: screenWidth - scale(180),
+                        top:  screenHeight - scale(144),
+                        position: 'absolute',
+                        width: scale(180),
+                        height: scale(144),
+                        zIndex: 100000,
+
+                    }}
+                />
             <label
                 style={{
                     position: 'absolute',
-                    left: window.screen.width / 2 - scale(50),
+                    left: screenWidth / 2 - scale(50),
                     top: scale(80),
                     fontFamily: 'fantasy',
                     fontWeight: 'bold',
@@ -120,7 +52,7 @@ const ChangePlanet = () => {
                     fontSize: scale(50)
                 }}
             >
-                {selectedPlanet.name}
+                {getPlanet(planetNum).name}
             </label>
             <button
 
@@ -154,8 +86,8 @@ const ChangePlanet = () => {
                     position: "absolute",
                     height: scale(500),
                     width: scale(500),
-                    top: window.screen.height / 2 - scale(250),
-                    left: window.screen.width / 2 - scale(250),
+                    top: screenHeight / 2 - scale(250),
+                    left: screenWidth / 2 - scale(250),
                 }}
             >
                 <img
@@ -164,7 +96,7 @@ const ChangePlanet = () => {
                         width: "100%",
                     }}
 
-                    src={planets[planetSelect].planet}
+                    src={getPlanet(selectNum).planet}
                 />
 
 
@@ -174,22 +106,24 @@ const ChangePlanet = () => {
         
                 onClick={() => {
 
-                    if (planetSelect > 0 && planets[planetSelect - 1].image != null) {
-                        setPlanetSelect(planetSelect - 1);
-                        selectedPlanet = planets[planetSelect - 1];
+                    if (planetNum > 1 /*&& planets[planetSelect - 1].image != null*/) {
+                        sessionStorage.setItem("selectedPlanet", --planetNum);
+                        setSelectNum(selectNum-=1)
+                        console.log(planetNum);
                         (new Audio(PlanetChange)).play();
-                    } else if (planets[planets.length - 1].image != null) {
-                        setPlanetSelect(planets.length - 1);
-                        selectedPlanet = planets[planets.length - 1];
-                        (new Audio(PlanetChange)).play();
+                    } else {
+                        sessionStorage.setItem("selectedPlanet", 1);
+                        setSelectNum(1)
+                        planetNum = 1;
+                        console.log(planetNum);
                     }
                 }}
 
                 style={{
                     borderWidth: 0,
                     position: 'absolute',
-                    top: window.screen.height / 2 - scale(30),
-                    left: window.screen.width / 2 - scale(550),
+                    top: screenHeight / 2 - scale(30),
+                    left: screenWidth / 2 - scale(550),
                     height: scale(60),
                     width: scale(60),
                     borderRadius: scale(10),
@@ -210,8 +144,8 @@ const ChangePlanet = () => {
                     position: 'absolute',
                     height: scale(40),
                     width: scale(40),
-                    top: window.screen.height / 2 - scale(20),
-                    left: window.screen.width / 2 - scale(540),
+                    top: screenHeight / 2 - scale(20),
+                    left: screenWidth / 2 - scale(540),
                     zIndex: 1000,
                 }}
                 src={Images.BackButton}
@@ -221,8 +155,8 @@ const ChangePlanet = () => {
 
                 style={{
                     position: 'absolute',
-                    top: window.screen.height / 2 - scale(20),
-                    left: window.screen.width / 2 + scale(500),
+                    top: screenHeight / 2 - scale(20),
+                    left: screenWidth / 2 + scale(500),
                     height: scale(40),
                     width: scale(40),
                     zIndex: 1000,
@@ -240,6 +174,7 @@ const ChangePlanet = () => {
                     height: scale(50),
                     width: scale(50),
                     transform: "scaleX(-1)"
+                    
 
                 }}
                 src={Images.BackButton2}
@@ -258,7 +193,7 @@ const ChangePlanet = () => {
                     width: scale(1000),
                     height: scale(80),
                     top: scaleV(720),
-                    left: window.screen.width / 2 - scale(500)
+                    left: screenWidth / 2 - scale(500)
                 }}
             >
                 <label
@@ -276,7 +211,7 @@ const ChangePlanet = () => {
                 <ProgressBar
                     variant="success"
                     animated
-                    now={selectedPlanet.stats.strength}
+                    now={getPlanet(planetNum).stats.strength}
                     style={{
                         backgroundColor: "grey",
                         alignSelf: 'center',
@@ -303,7 +238,7 @@ const ChangePlanet = () => {
                 <ProgressBar
                     animated
                     className='defence'
-                    now={selectedPlanet.stats.defence}
+                    now={getPlanet(planetNum).stats.defence}
                     style={{
                         backgroundColor: "grey",
                         alignSelf: 'center',
@@ -322,22 +257,26 @@ const ChangePlanet = () => {
 
                 onClick={() => {
 
-                    if (planetSelect < planets.length && planets[planetSelect + 1].image != null) {
-                        setPlanetSelect(planetSelect + 1);
-                        selectedPlanet = planets[planetSelect + 1];
+                    if (planetNum < 4 /*&& planets[planetSelect + 1].image != null*/) {
+
+                        setSelectNum(selectNum+=1)
+                        sessionStorage.setItem("selectedPlanet", ++planetNum);
+                        console.log(planetNum);
                         (new Audio(PlanetChange)).play();
-                    } else if (planets[0].image != null) {
-                        setPlanetSelect(0);
-                        selectedPlanet = planets[0];
-                        (new Audio(PlanetChange)).play();
+                    } else {
+                        sessionStorage.setItem("selectedPlanet", 4);
+                        planetNum = 4;
+                        setSelectNum(4)
+                        console.log(planetNum);
+
                     }
                 }}
 
                 style={{
                     borderWidth: 0,
                     position: 'absolute',
-                    top: window.screen.height / 2 - scale(30),
-                    left: window.screen.width / 2 + scale(490),
+                    top: screenHeight / 2 - scale(30),
+                    left: screenWidth / 2 + scale(490),
                     height: scale(60),
                     width: scale(60),
                     borderRadius: scale(10),
@@ -358,7 +297,3 @@ const ChangePlanet = () => {
 
 
 export default ChangePlanet;
-
-export {
-    selectedPlanet
-}

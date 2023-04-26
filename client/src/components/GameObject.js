@@ -1,7 +1,6 @@
 import React, { Component, useState, useEffect } from 'react'
 import Images from '../Images';
-import { scale, scaleH, scaleV } from '../App';
-
+import {scale, scaleH, scaleV, screenHeight, screenWidth } from '../App';
 var GameObjects = [];
 
 const dotProduct = function (v1, v2) {
@@ -13,31 +12,31 @@ const magnitude = function (v) {
 }
 
 const difference = function (v1, v2) {
-    return [{
+    return {
         x: v1.x - v2.x,
         y: v1.y - v2.y
-    }];
+    };
 }
 
 const multiply = function (v, c) {
-    return [{
+    return {
         x: v.x * c,
         y: v.y * c
-    }];
+    };
 }
 
 const normal = function (v) {
-    return [{
+    return {
         x: v.x / magnitude(v),
         y: v.y / magnitude(v),
-    }];
+    };
 }
 
 const rotate = function (v) {
-    return [{
+    return {
         x: -v.y,
         y: v.x
-    }];
+    };
 }
 
 class GameObject {
@@ -54,26 +53,26 @@ class GameObject {
     zIndex = 0;
 
 
-    position = [{
+    position = {
         x: 0,
         y: 0
-    }];
+    };
 
-    direction = [{
+    direction = {
         x: 0,
         y: 0
-    }];
+    };
 
 
-    pivot = [{
+    pivot = {
         x: this.position.x,
         y: this.position.y
-    }]
+    };
 
-    size = [{
+    size = {
         width: 64,
         height: 64
-    }];
+    };
 
 
 
@@ -124,8 +123,8 @@ class GameObject {
 
     onCollision(object, action) {
 
-        var xDiff = Math.abs(this.position.x - object.position.x);
-        var yDiff = Math.abs(this.position.y - object.position.y);
+        var xDiff = this.position.x - object.position.x;
+        var yDiff = this.position.y - object.position.y;
         var mag = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
         //var directionalSpeed = this.speed * (this.direction.x * xDiff + this.direction.y * yDiff);
         if (object.id == "sheild" || object.id == "planet" || object.id == "meteor") {
@@ -133,57 +132,51 @@ class GameObject {
                 this.isCollidable &&
                 object.isCollidable)
                 action(this, [(0.5 + Math.random() * 0.5) * xDiff / mag, (0.5 + Math.random() * 0.5) * yDiff / mag]);
-        } else if (object.id == "dfs" && this.isCollidable && object.isCollidable) {
+        } /*else if (object.id == "sheild" && this.isCollidable && object.isCollidable) {
+            xDiff = this.position.x - screenWidth/2;
+            yDiff =this.position.y - screenHeight/2;
+            mag = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+            var xDiff2 = Math.abs(object.position.x - screenWidth/2);
+            var yDiff2 = Math.abs(object.position.y - screenHeight/2);
+            var radius = Math.sqrt(Math.pow(xDiff2, 2) + Math.pow(yDiff2, 2));
 
-            var leftEnd = [{
-                x: -object.size.width / 2 * Math.cos(object.orientation * Math.PI / 180) + object.position.x,
-                y: -object.size.width / 2 * Math.sin(object.orientation * Math.PI / 180) + object.position.y
-            }]
+            var dot = dotProduct(this.direction,{x: xDiff/mag,y: yDiff/mag});
+            var dir = this.direction;
 
-            var rightEnd = [{
-                x: object.size.width / 2 * Math.cos(object.orientation * Math.PI / 180) + object.position.x,
-                y: object.size.width / 2 * Math.sin(object.orientation * Math.PI / 180) + object.position.y
+            var mult = multiply(multiply({x: xDiff/mag,y: yDiff/mag},dot),2)
+            
+            var X = dir.x - Math.sign(dot)*mult.x
+            var Y = dir.y - Math.sign(dot)*mult.y
+            var angle = Math.atan2(yDiff, xDiff)*180/Math.PI;
+            var angleDiff = Math.atan2(object.size.width/2, radius)*180/Math.PI;
 
-            }]
+            console.log(angle)
 
-            var lineVector = difference(rightEnd, leftEnd)
-            var positionVector = difference(this.position, rightEnd)
-            var radius = Math.min(this.size.width, this.size.height) / 2;
-            var angle = Math.acos(multiply(dotProduct(lineVector, positionVector), 1 / (object.size.width * magnitude(positionVector)))) * Math.PI / 180;
-            console.log(positionVector);
-
-            if (magnitude(positionVector) * Math.sin(angle) >= radius &&
-                magnitude(positionVector) * Math.cos(angle) >= 0 &&
-                magnitude(positionVector) * Math.sin(angle) <= object.size.width
-            ) {
-                var normalVector = rotate(lineVector);
-
-                if (0 <= magnitude(positionVector) * Math.cos(angle) && magnitude(positionVector) * Math.cos(angle) <= radius)
-                    normalVector = positionVector
-                else if (object.size.width - radius <= magnitude(positionVector) * Math.cos(angle) && magnitude(positionVector) * Math.cos(angle) <= object.size.width)
-                    normalVector = difference(this.position, leftEnd);
-
-                action(this, [normalVector.x, normalVector.y]);
-            }
-        }
+            if(mag <= radius + Math.min(this.size.width, this.size.height) / 2 &&
+                angle >= object.orientation - 30 &&
+                angle <= object.orientation + 30
+            )
+            action(this, [(0.5 + Math.random() * 0.5) * xDiff / mag, (0.5 + Math.random() * 0.5) * yDiff / mag]);
+        
+        }*/
 
     }
 
 
 
     onBorderCollision(action) {
-        if (scale(this.position.x - this.size.width / 2) < this.speed || scale(this.position.x + this.size.width / 2) + this.speed > window.screen.width)
+        if (scale(this.position.x - this.size.width / 2) < this.speed || scale(this.position.x + this.size.width / 2) + this.speed > screenWidth)
             action(this, "x-collision");
 
-        else if (scale(this.position.y - this.size.height / 2) < this.speed || scale(this.position.y + this.size.height / 2) + this.speed > window.screen.height)
+        else if (scale(this.position.y - this.size.height / 2) < this.speed || scale(this.position.y + this.size.height / 2) + this.speed > screenHeight)
             action(this, "y-collision");
 
     }
 
     outOfBounds(offset) {
 
-        if (scale(this.position.x - this.size.width / 2) < -scale(offset) || scale(this.position.x + this.size.width / 2) > window.screen.width + scale(offset) ||
-            scale(this.position.y - this.size.height / 2) < - scale(offset) || scale(this.position.y + this.size.height / 2) > window.screen.height + scale(offset))
+        if (scale(this.position.x - this.size.width / 2) < -scale(offset) || scale(this.position.x + this.size.width / 2) > screenWidth + scale(offset) ||
+            scale(this.position.y - this.size.height / 2) < - scale(offset) || scale(this.position.y + this.size.height / 2) > screenHeight + scale(offset))
             return true;
 
     }
@@ -225,7 +218,7 @@ class GameObject {
                         />
                     </div>
 
-                    <label
+                    {/*<label
                         style={{
                             color: 'white',
                             position: 'absolute',
@@ -239,7 +232,7 @@ class GameObject {
 
                     </label>
 
-                    {/*<lable
+                    <lable
                         style={{
                             position: 'absolute',
                             top: scale(-this.size.width / 2 * Math.sin(this.orientation * Math.PI / 180) + this.position.y),
@@ -248,7 +241,7 @@ class GameObject {
 
                         }}
                     >
-                        {this.c}
+                        a
                     </lable>
 
                     <lable
@@ -257,7 +250,7 @@ class GameObject {
                             top: scale(this.size.width / 2 * Math.sin(this.orientation * Math.PI / 180) + this.position.y),
                             left: scale(this.size.width / 2 * Math.cos(this.orientation * Math.PI / 180) + this.position.x),
                             zIndex: 10,
-                            backgroundColor: "red"
+                           
                         }}
                     >
                         b

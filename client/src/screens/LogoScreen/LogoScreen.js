@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import Images from '../../Images'
 import { useNavigate } from "react-router-dom";
 import '../LogoScreen/LogoScreen.css'
-import LobbyTheme from '../../Sounds/LobbyTheme.mp3'
 import { scale, scaleH, scaleV } from '../../App'
-import { selectedPlanet } from '../ChangePlanet/ChangePlanet';
+import Planets from '../../components/Planets';
 import GameObject from '../../components/GameObject';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
@@ -12,51 +11,58 @@ import ButtonClick from '../../Sounds/ButtonClick.mp3'
 import ButtonHover from '../../Sounds/ButtonHover.mp3'
 import PlanetChange from '../../Sounds/PlanetChange.mp3'
 import { UUID } from '../../App';
-var music = new Audio(LobbyTheme);
+
+const screenWidth = 1535;
+const screenHeight = 863;
+const getPlanet = function (num) {
+    switch (num) {
+        case 0:
+            return Planets.Mercury;
+        case 1:
+            return Planets.Venus;
+        case 2:
+            return Planets.Earth;
+        case 3:
+            return Planets.Mars;
+        case 4:
+            return Planets.Jupiter;
+        case 5:
+            return Planets.Saturn;
+        case 6:
+            return Planets.Uranus;
+        case 7:
+            return Planets.Neptune;
+        case 8:
+            return Planets.Pluto;
+        default:
+            return Planets.Earth;
+    }
+}
+var planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
 var earthSheild = new GameObject([500, 500], [225, 75], 0, Images.PlanetSheild, "none", "", false);
-var planet = new GameObject([0, window.screen.height], [1000, 1000], 0, selectedPlanet.planet, "none", "", false);
-var planetAngle = 0;
+var planet = new GameObject([0, screenHeight], [1000, 1000], 0, getPlanet(planetNum), "none", "", false);
 var gameName = ""
-var screen;
 
 
 
 const LogoScreen = () => {
-    try {
-        music.play();
-    } catch (error) {
-
-    }
-
-    const pageAccessedByReload = (
-        (window.performance.navigation && window.performance.navigation.type === 1) ||
-        window.performance
-            .getEntriesByType('navigation')
-            .map((nav) => nav.type)
-            .includes('reload')
-    );
-
+    planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
     var [lobbyState, setLobbyState] = useState("");
 
-    function removeUser() {
-        fetch('/removeUserID', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ UUID: UUID })
-        })
-    }
 
-    function setScreen(state) {
-
+    function setScreen(state, tryCount) {
+        var fetched = false;
         fetch('/setScreen', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ UUID: UUID, data: state })
-        });
+        })
+            .then(async response => await response.json())
+            .then(async data => {
+                fetched = await data;
+            });
 
 
     }
@@ -69,9 +75,10 @@ const LogoScreen = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ UUID: UUID })
-        }).then(async response => await response.json())
+        })
+            .then(async response => await response.json())
             .then(async data => {
-                setLobbyState(data);
+                setLobbyState(await data);
             })
     }
 
@@ -84,14 +91,21 @@ const LogoScreen = () => {
     var [backgroundX, setBackgroundX] = useState(0);
     var [backgroundY, setBackgroundY] = useState(0);
     var [logoOpacity, setLogoOpacity] = useState(0);
-
+    var [queueClick, setQueueClick] = useState(false);
     var [hoverSolo, setHoverSolo] = useState(false);
     var [hoverMP, setHoverMP] = useState(false);
     var [hoverCP, setHoverCP] = useState(false);
 
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+    useEffect(() => {
+        const planetRotation = setInterval(() => {
+            planet.setOrientation((planet.orientation + 0.01) % 360);
+        }, 1);
 
+        return () => clearInterval(planetRotation);
+
+    }, []);
 
     useEffect(() => {
         const handleMouseMove = (event) => {
@@ -114,18 +128,11 @@ const LogoScreen = () => {
     }, []);
 
     useEffect(() => {
-        planet.image = selectedPlanet.planet;
-    }, [selectedPlanet])
+        planet.image = getPlanet(planetNum).planet;
+        console.log(planetNum + ", " + getPlanet(planetNum).planet)
+    })
 
-    useEffect(() => {
-        const planetRotation = setInterval(() => {
-            planetAngle = (planetAngle + 0.01) % 360;
 
-        }, 1);
-
-        return () => clearInterval(planetRotation);
-
-    }, []);
 
     useEffect(() => {
         gameName = name;
@@ -133,24 +140,26 @@ const LogoScreen = () => {
 
     useEffect(() => {
 
-        earthSheild.setOrientation(Math.atan2(mousePos.y - window.screen.height, mousePos.x) * 180 / Math.PI + 90);
-        earthSheild.setPosition(550 * Math.cos(Math.atan2(window.screen.height - mousePos.y, mousePos.x)), window.screen.height - scaleV(550) * Math.sin(Math.atan2(window.screen.height - mousePos.y, mousePos.x)));
+        earthSheild.setOrientation(Math.atan2(mousePos.y - scale(screenHeight), mousePos.x) * 180 / Math.PI + 90);
+        earthSheild.setPosition(550 * Math.cos(Math.atan2(scale(screenHeight) - mousePos.y, mousePos.x)), screenHeight - 550 * Math.sin(Math.atan2(scale(screenHeight) - mousePos.y, mousePos.x)));
     }, [mousePos.x, mousePos.y]);
 
     useEffect(() => {
         if (lobbyState != "logo")
             updateLobbyState();
-    }, [UUID])
+    }, [])
 
     const displayQueueScreen = function () {
 
         return (
-            <div>
+            <div style={{
+                color: "red"
+            }}>
                 <img
                     src={Images.GameLogo}
                     style={{
-                        left: window.screen.width - scale(180),
-                        top: window.screen.height - scale(144),
+                        left: scaleH(screenWidth) - scale(180),
+                        top: scale(screenHeight - 144),
                         position: 'absolute',
                         width: scale(180),
                         height: scale(144),
@@ -163,15 +172,22 @@ const LogoScreen = () => {
 
                     onClick={() => {
                         (new Audio(ButtonHover)).play();
-                        setScreen("menu");
+                        setQueueClick(false);
+                        setName("");
+
+
+                        setScreen("menu", 0);
                         updateLobbyState();
+
+
+
                     }}
 
                     style={{
                         borderWidth: 0,
                         position: 'absolute',
                         top: scaleV(10),
-                        left: scale(10),
+                        left: scaleH(10),
                         height: scale(80),
                         width: scale(80),
                         borderColor: "lightblue",
@@ -192,8 +208,8 @@ const LogoScreen = () => {
                     }}
                     style={{
                         position: 'absolute',
-                        top: window.screen.height / 2 + scale(25),
-                        left: window.screen.width / 2 + scale(105),
+                        top: scale(screenHeight / 2 + 25),
+                        left: scaleH(screenWidth / 2) + scale(105),
                         backgroundColor: "black",
                         borderColor: "white",
                         borderRadius: scale(10),
@@ -211,8 +227,8 @@ const LogoScreen = () => {
                     }}
                     style={{
                         position: 'absolute',
-                        top: window.screen.height / 2 + scale(25),
-                        left: window.screen.width / 2 - scale(155),
+                        top: scale(screenHeight / 2 + 25),
+                        left: scaleH(screenWidth / 2) - scale(155),
                         backgroundColor: "black",
                         borderColor: "white",
                         borderRadius: scale(10),
@@ -226,8 +242,8 @@ const LogoScreen = () => {
                         position: 'absolute',
                         height: scale(40),
                         width: scale(40),
-                        top: window.screen.height / 2 + scale(17),
-                        left: window.screen.width / 2 - scale(10),
+                        top: scale(screenHeight / 2 + 17),
+                        left: scaleH(screenWidth / 2) - scale(10),
                         fontFamily: 'fantasy',
                         fontWeight: 'bold',
                         fontSize: scale(50),
@@ -245,8 +261,8 @@ const LogoScreen = () => {
                         position: 'absolute',
                         height: scale(40),
                         width: scale(40),
-                        top: window.screen.height / 2 + scale(30),
-                        left: window.screen.width / 2 - scale(150),
+                        top: scale(screenHeight / 2 + 30),
+                        left: scaleH(screenWidth / 2) - scale(150),
                         zIndex: 1000,
                     }}
                     src={Images.BackButton}
@@ -256,8 +272,8 @@ const LogoScreen = () => {
 
                     style={{
                         position: 'absolute',
-                        top: window.screen.height / 2 + scale(30),
-                        left: window.screen.width / 2 + scale(110),
+                        top: scale(screenHeight / 2 + 30),
+                        left: scaleH(screenWidth / 2) + scale(110),
                         height: scale(40),
                         width: scale(40),
                         zIndex: 1000,
@@ -275,7 +291,8 @@ const LogoScreen = () => {
                         left: scale(23),
                         height: scale(50),
                         width: scale(50),
-                        transform: "scaleX(-1)"
+                        transform: "scaleX(-1)",
+                        padding: 0,
 
                     }}
                     src={Images.BackButton2}
@@ -298,29 +315,47 @@ const LogoScreen = () => {
                             height: scale(40),
                             fontSize: scale(20),
                             position: 'absolute',
-                            left: window.screen.width / 2 - scale(150),
-                            top: window.screen.height / 2 - scale(50),
+                            left: scaleH(screenWidth / 2) - scale(150),
+                            top: scale(screenHeight / 2 - 50),
 
                         }}
                         placeholder="Enter Name" />
 
                 </Form.Group>
+                {queueClick &&
+                    <label
+
+                        style={{
+                            position: "absolute",
+                            left: scaleH(screenWidth / 2) - scale(70),
+                            top: scale(screenHeight / 2 + 180),
+                            width: scale(200),
+                            height: scale(60),
+                            fontSize: scale(10),
+                            color: "red"
+
+                        }}
+                    >
+                        GAME MODE NOT AVALIABLE!
+                    </label>
+                }
 
                 <button className='PlayButton'
                     disabled={name == ""}
 
                     style={{
-                        left: window.screen.width / 2 - scale(100),
-                        top: window.screen.height / 2 + scale(105),
+                        position: "absolute",
+                        left: scaleH(screenWidth / 2) - scale(100),
+                        top: scale(screenHeight / 2 + 105),
                         width: scale(200),
                         height: scale(60),
                         fontSize: scale(40),
-                        color: (name == "") ? "grey" : "cyan",
+                        color: (name == "") ? "grey" : (queueClick) ? "red" : "cyan",
 
                     }}
                     onClick={() => {
                         (new Audio(ButtonHover)).play();
-                        navigate('GameScreen');
+                        setQueueClick(true);
                     }}
                 >
 
@@ -340,11 +375,12 @@ const LogoScreen = () => {
                     src={Images.GameLogo}
                     style={{
                         opacity: logoOpacity,
-                        left: window.screen.width / 2 - scale(300),
-                        top: window.screen.height / 2 - scale(300),
+                        left: scaleH(screenWidth / 2) - scale(300),
+                        top: scale(screenHeight / 2 - 300),
                         position: 'absolute',
                         width: scale(600),
                         height: scale(480),
+                        zIndex: 100000,
 
                     }}
                 />
@@ -356,8 +392,8 @@ const LogoScreen = () => {
                     style={{
 
                         opacity: (logoOpacity >= 1) ? 1 : 0,
-                        left: window.screen.width / 2 - scale(100),
-                        top: window.screen.height / 2 + scale(220),
+                        left: scaleH(screenWidth / 2) - scale(100),
+                        top: scale(screenHeight / 2 + 220),
                         width: scale(200),
                         height: scale(60),
                         fontSize: scale(40),
@@ -365,8 +401,8 @@ const LogoScreen = () => {
                     }}
                     onClick={() => {
                         (new Audio(ButtonHover)).play();
-                        setScreen("menu");
-                            updateLobbyState();
+                        setScreen("menu", 0);
+                        updateLobbyState();
                     }}
 
                 >
@@ -380,21 +416,33 @@ const LogoScreen = () => {
 
     const displayMenu = function () {
 
-        planet.setOrientation(planetAngle);
+
         return (
             <div
                 style={{
                     color: 'red'
                 }}
             >
+                <label
+                    style={{
+                        position: "absolute",
+                        color: "white",
+                        fontWeight: "bold",
+                        fontSize: scale(15),
+                        left: scale(5),
+                        top: scale(5)
+                    }}
+                >
+                    F11 for full screen
+                </label>
 
                 {planet.render()}
 
                 <img
                     src={Images.GameLogo}
                     style={{
-                        left: window.screen.width - scale(180),
-                        top: window.screen.height - scale(144),
+                        left: scaleH(screenWidth) - scale(180),
+                        top: scale(screenHeight - 144),
                         position: 'absolute',
                         width: scale(180),
                         height: scale(144),
@@ -433,6 +481,13 @@ const LogoScreen = () => {
                             setHoverSolo(false);
                         }}
 
+                        onClick={() => {
+                            (new Audio(ButtonHover)).play();
+                            setHoverSolo(false);
+                            navigate('SoloGameScreen');
+
+                        }}
+
                     >
                         SOLO
                     </label>
@@ -455,7 +510,7 @@ const LogoScreen = () => {
                         onClick={() => {
                             (new Audio(ButtonHover)).play();
                             setHoverMP(false);
-                            setScreen("queue");
+                            setScreen("queue", 0);
                             updateLobbyState();
 
                         }}
@@ -507,7 +562,7 @@ const LogoScreen = () => {
                         onClick={() => {
                             (new Audio(ButtonHover)).play();
                             navigate('ChangePlanetScreen');
-        
+
                         }}
 
                     >
@@ -520,12 +575,10 @@ const LogoScreen = () => {
     }
 
     useEffect(() => {
-        var img = new Image();
-        img.src = Images.SpaceBackground1;
 
         const timerId = setInterval(() => {
-            setBackgroundX(backgroundX => (backgroundX + 1) % img.width);
-            setBackgroundY(backgroundY => (backgroundY + 3) % img.height);
+            setBackgroundX(backgroundX => (backgroundX + 1) % 512);
+            setBackgroundY(backgroundY => (backgroundY + 3) % 512);
         }, 50);
 
         const timerId2 = setInterval(() => {
@@ -544,9 +597,9 @@ const LogoScreen = () => {
             style={{
                 backgroundPositionX: backgroundX,
                 backgroundPositionY: backgroundY,
-                color: "red"
+
             }}
-        >   
+        >
             {(lobbyState == "logo") && displayLogo()}
             {(lobbyState == "menu") && displayMenu()}
             {(lobbyState == "queue") && displayQueueScreen()}
@@ -561,5 +614,5 @@ export default LogoScreen;
 
 export {
     gameName,
-    music
+    getPlanet,
 }

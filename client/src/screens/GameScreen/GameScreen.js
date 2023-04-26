@@ -10,7 +10,6 @@ import { GameObjects } from '../../components/GameObject'
 import { Navigate, useNavigate } from "react-router-dom";
 
 import './GameScreen.css';
-import { selectedPlanet } from '../ChangePlanet/ChangePlanet'
 import { gameName } from '../LogoScreen/LogoScreen'
 import { scale, scaleH, scaleV } from '../../App'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,14 +18,14 @@ import GameSprite from '../../components/GameSprite'
 import { GameSprites } from '../../components/GameSprite'
 import Explosion from '../../Sounds/Explosion.mp3'
 import Modal from 'react-bootstrap/Modal';
-import { music } from '../LogoScreen/LogoScreen'
-var earth = new GameObject([0, 0], [500, 500], 0, selectedPlanet.planet, "planet", "", true);
+
+/*var earth = new GameObject([0, 0], [500, 500], 0, selectedPlanet.planet, "planet", "", true);
 var earthSheild = new GameObject([-1000, -1000], [selectedPlanet.stats.defence / 100 * 225, selectedPlanet.stats.defence / 100 * 75], 0, Images.PlanetSheild, "sheild", "", true);
 var blackHole = new GameObject([window.screen.width / 2, window.screen.height / 2], [400, 400], 0, Images.BlackHole, "blackHole", "none", false);
-var destroyed = false;
+var destroyed = false;*/
 
 const GameScreen = () => {
-    music.play();
+    /*music.play();
     const navigate = useNavigate()
     blackHole.opacity = 0.9;
     earth.image = selectedPlanet.planet;
@@ -434,7 +433,7 @@ const GameScreen = () => {
             {renderGameObjects()}
             {renderGameSprites()}
         </div>
-    );
+    );*/
 };
 
 export default GameScreen;
