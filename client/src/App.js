@@ -1,6 +1,6 @@
 import './App.css'
 import React from 'react'
-import Images from './Images';
+//import Images from './Images';
 
 
 
