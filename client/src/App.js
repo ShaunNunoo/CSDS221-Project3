@@ -6,7 +6,7 @@ import LogoScreen from './screens/LogoScreen/LogoScreen'
 import ChangePlanet from './screens/ChangePlanet/ChangePlanet';
 import SoloGameScreen from './screens/SoloGameScreen/SoloGameScreen';
 import LobbyTheme from './Sounds/LobbyTheme.mp3'
-
+/* */
 var music = new Audio(LobbyTheme);
 music.loop = true;
 const screenWidth = Math.max( window.screen.width, window.screen.height);
