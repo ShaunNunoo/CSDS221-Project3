@@ -9,8 +9,8 @@ import LobbyTheme from './Sounds/LobbyTheme.mp3'
 /* */
 
 
-const screenWidth = Math.max( window.screen.width, window.screen.height);
-const screenHeight = Math.min( window.screen.width, window.screen.height);
+const screenWidth = Math.max(window.screen.width, window.screen.height);
+const screenHeight = Math.min(window.screen.width, window.screen.height);
 
 if (sessionStorage.getItem("screen") == null)
   sessionStorage.setItem("screen", "logo")
@@ -18,48 +18,42 @@ if (sessionStorage.getItem("screen") == null)
 if (sessionStorage.getItem("selectedPlanet") == null)
   sessionStorage.setItem("selectedPlanet", 2)
 
-
-
-  const music = new Audio(LobbyTheme);
-  music.load();
-  music.loop = true;
-  music.autoplay = true;
 function App() {
- 
+  const [music] = useState(new Audio(LobbyTheme));
 
   useEffect(() => {
-    
+
     music.addEventListener("canplay", (event) => {
       console.log("can play")
       /* the audio is now playable; play it if permissions allow */
-      
+
       music.play();
     });
 
-    if(sessionStorage.getItem("audioTime")!=null){
+    if (sessionStorage.getItem("audioTime") != null) {
       music.currentTime = sessionStorage.getItem("audioTime");
       sessionStorage.removeItem("audioTime");
-  }
+    }
   })
 
-/*  if (sessionStorage.getItem("GameID") == null)
-    window.location.reload();*/
+  /*  if (sessionStorage.getItem("GameID") == null)
+      window.location.reload();*/
 
 
- /* fetch('/userID', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ UUID: (sessionStorage.getItem("GameID") == null) ? "" : sessionStorage.getItem("GameID") })
-  })
-    .then(async response => await response.json())
-    .then(async data => {
-      console.log("Reached: " + data)
-      if (sessionStorage.getItem("GameID") == null)
-        sessionStorage.setItem("GameID", await data)
-    })
-*/
+  /* fetch('/userID', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json'
+     },
+     body: JSON.stringify({ UUID: (sessionStorage.getItem("GameID") == null) ? "" : sessionStorage.getItem("GameID") })
+   })
+     .then(async response => await response.json())
+     .then(async data => {
+       console.log("Reached: " + data)
+       if (sessionStorage.getItem("GameID") == null)
+         sessionStorage.setItem("GameID", await data)
+     })
+ */
 
   return (
     <Router>
@@ -102,5 +96,5 @@ export {
   //UUID,
   screenHeight,
   screenWidth,
-  music
+
 }
