@@ -7,8 +7,8 @@ import ChangePlanet from './screens/ChangePlanet/ChangePlanet';
 import SoloGameScreen from './screens/SoloGameScreen/SoloGameScreen';
 import LobbyTheme from './Sounds/LobbyTheme.mp3'
 /* */
-var music = new Audio(LobbyTheme);
-music.loop = true;
+const music = new Audio(LobbyTheme);
+
 const screenWidth = Math.max( window.screen.width, window.screen.height);
 const screenHeight = Math.min( window.screen.width, window.screen.height);
 
@@ -17,10 +17,14 @@ if (sessionStorage.getItem("screen") == null)
 
 if (sessionStorage.getItem("selectedPlanet") == null)
   sessionStorage.setItem("selectedPlanet", 2)
-
+music.loop = true;
 
 function App() {
-  music.play();
+  music.addEventListener("canplaythrough", (event) => {
+    /* the audio is now playable; play it if permissions allow */
+    music.play();
+  });
+
   useEffect(() => {
     
 
@@ -51,7 +55,6 @@ function App() {
 
   return (
     <Router>
-      THIS IS A TEST!
       <div className='App'
         style={{
           backgroundColor: "black"
