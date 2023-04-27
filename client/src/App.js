@@ -1,10 +1,6 @@
 import './App.css'
 import React from 'react'
-//import Images from './Images';
-
-
-
-
+import IMG from './IMG';
 
 
 function App() {
@@ -17,7 +13,12 @@ function App() {
           color: "red"
         }}
       >
-       HWLLO QORLD
+          sdfvecwxsqd 
+          <img
+          src = {IMG.i}>
+          </img>
+
+     
       </div>
   );
 }
