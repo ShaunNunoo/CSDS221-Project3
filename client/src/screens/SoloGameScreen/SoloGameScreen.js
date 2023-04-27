@@ -65,7 +65,7 @@ const SoloGameScreen = () => {
         for (var i = 0; i < GameObjects.length; i++)
             if (GameObjects[i].id == "meteor") {
                 meteors.push(GameObjects[i]);
-
+                
                 GameObjects[i].onBorderCollision((object, collisionType) => {
 
                     /*if (collisionType == "x-collision")
@@ -106,8 +106,8 @@ const SoloGameScreen = () => {
                         meteors[j].speed * meteors[j].direction.x*v[0] + meteors[j].speed * meteors[j].direction.y*v[1],
                         meteors[j].speed * meteors[j].direction.x*u[0] + meteors[j].speed * meteors[j].direction.y*u[1]
                     ];
-                    var m1 = (object.size.width * object.size.height) * (object.size.width * object.size.height);
-                    var m2 = (meteors[j].size.width * meteors[j].size.height) * (meteors[j].size.width * meteors[j].size.height);
+                    var m1 = (object.size.width * object.size.height);
+                    var m2 = (meteors[j].size.width * meteors[j].size.height);
 
 
 
@@ -124,6 +124,12 @@ const SoloGameScreen = () => {
                         (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2)*v[0] +  (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2)*u[0],
                         (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2)*v[1] +  (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2)*u[1]
                     ]);
+
+                    if(object.speed == 0 || (object.direction.x == 0 && object.direction.y == 0)){
+                        object.speed = 1;
+                        object.setDirection([Math.random(),Math.random()]);
+
+                    }
                 })
 
 
@@ -161,7 +167,7 @@ const SoloGameScreen = () => {
                     new GameSprite(Images.ExplosionSprite, 5, 3, [object.position.x + 2 * object.speed * object.direction.x, object.position.y + 2 * object.speed * object.direction.y], [explotionSize, explotionSize], 180 / Math.PI * Math.atan2(collisionNormal[1], collisionNormal[0]) + 90);
                     setMeteorCount(meteorCount -= 1);
                     setHealth(health -= (object.speed * (65 - getPlanet(planetNum).stats.strength / 100 * 40) * object.size.width * object.size.height) / 43200);
-                    explosion.volume = (object.size.width * object.size.height * object.speed / 43200);
+                    explosion.volume = Math.max(0, Math.min(1, (object.size.width * object.size.height * object.speed / 43200)));
                     explosion.play();
                     object.destroy();
                     if (health <= 0)
