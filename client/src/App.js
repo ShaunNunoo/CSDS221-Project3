@@ -7,7 +7,7 @@ import ChangePlanet from './screens/ChangePlanet/ChangePlanet';
 import SoloGameScreen from './screens/SoloGameScreen/SoloGameScreen';
 import LobbyTheme from './Sounds/LobbyTheme.mp3'
 /* */
-const music = new Audio(LobbyTheme);
+
 
 const screenWidth = Math.max( window.screen.width, window.screen.height);
 const screenHeight = Math.min( window.screen.width, window.screen.height);
@@ -19,18 +19,22 @@ if (sessionStorage.getItem("selectedPlanet") == null)
   sessionStorage.setItem("selectedPlanet", 2)
 
 
-music.addEventListener("canplay", (event) => {
-  console.log("can play")
-  /* the audio is now playable; play it if permissions allow */
-  music.loop = true;
-  music.play();
-});
 
+  const music = new Audio(LobbyTheme);
+  music.load();
+  music.loop = true;
+  music.autoplay = true;
 function App() {
  
 
   useEffect(() => {
     
+    music.addEventListener("canplay", (event) => {
+      console.log("can play")
+      /* the audio is now playable; play it if permissions allow */
+      
+      music.play();
+    });
 
     if(sessionStorage.getItem("audioTime")!=null){
       music.currentTime = sessionStorage.getItem("audioTime");
