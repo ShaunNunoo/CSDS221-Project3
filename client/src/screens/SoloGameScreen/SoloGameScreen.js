@@ -18,6 +18,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import GameSprite from '../../components/GameSprite'
 import { GameSprites } from '../../components/GameSprite'
 import Explosion from '../../Sounds/Explosion.mp3'
+import Bump from '../../Sounds/bump.mp3'
 import Modal from 'react-bootstrap/Modal';
 import { c } from '../../App'
 import { music } from '../../App'
@@ -150,6 +151,8 @@ const SoloGameScreen = () => {
                         var dot = norm[0]*dir[0] + norm[1]*dir[1];
                         
                         object.setDirection([dir[0] - 2*dot*norm[0],dir[1] - 2*dot*norm[1]]);
+
+                        new Audio(Bump).play()
                     }
 
 

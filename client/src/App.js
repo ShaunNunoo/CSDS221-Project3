@@ -17,13 +17,17 @@ if (sessionStorage.getItem("screen") == null)
 
 if (sessionStorage.getItem("selectedPlanet") == null)
   sessionStorage.setItem("selectedPlanet", 2)
-music.loop = true;
+
+
+music.addEventListener("canplay", (event) => {
+  console.log("can play")
+  /* the audio is now playable; play it if permissions allow */
+  music.loop = true;
+  music.play();
+});
 
 function App() {
-  music.addEventListener("canplaythrough", (event) => {
-    /* the audio is now playable; play it if permissions allow */
-    music.play();
-  });
+ 
 
   useEffect(() => {
     
