@@ -20,9 +20,9 @@ if (sessionStorage.getItem("selectedPlanet") == null)
 
 
 function App() {
-
+  music.play();
   useEffect(() => {
-    music.play();
+    
 
     if(sessionStorage.getItem("audioTime")!=null){
       music.currentTime = sessionStorage.getItem("audioTime");
@@ -51,6 +51,7 @@ function App() {
 
   return (
     <Router>
+      THIS IS A TEST!
       <div className='App'
         style={{
           backgroundColor: "black"
