@@ -21,7 +21,7 @@ import Explosion from '../../Sounds/Explosion.mp3'
 import Bump from '../../Sounds/bump.mp3'
 import Modal from 'react-bootstrap/Modal';
 import { c } from '../../App'
-//import { music } from '../../App'
+import { music } from '../LogoScreen/LogoScreen'
 const screenWidth = 1535;
 const screenHeight = 863;
 
@@ -420,7 +420,7 @@ const SoloGameScreen = () => {
                     }}
                     onClick={() => {
                         sessionStorage.setItem("backToMenu", "");
-                        //sessionStorage.setItem("audioTime", music.currentTime);
+                        sessionStorage.setItem("audioTime", music.currentTime);
                         window.location.reload();
                     }}
                 >
@@ -515,7 +515,7 @@ const SoloGameScreen = () => {
                 }}
                 onClick={() => {
                     sessionStorage.setItem("backToMenu", "");
-                   // sessionStorage.setItem("audioTime", music.currentTime);
+                    sessionStorage.setItem("audioTime", music.currentTime);
                     window.location.reload();
 
                 }}

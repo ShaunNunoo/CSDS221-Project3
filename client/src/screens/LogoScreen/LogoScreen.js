@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form';
 import ButtonClick from '../../Sounds/ButtonClick.mp3'
 import ButtonHover from '../../Sounds/ButtonHover.mp3'
 import PlanetChange from '../../Sounds/PlanetChange.mp3'
-
+import LobbyTheme from '../../Sounds/LobbyTheme.mp3'
 const screenWidth = 1535;
 const screenHeight = 863;
 const getPlanet = function (num) {
@@ -41,10 +41,25 @@ var planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
 var earthSheild = new GameObject([500, 500], [225, 75], 0, Images.PlanetSheild, "none", "", false);
 var planet = new GameObject([0, screenHeight], [1000, 1000], 0, getPlanet(planetNum), "none", "", false);
 var gameName = ""
-
-
+const music = new Audio(LobbyTheme);
+music.loop = true;
+music.autoplay = true;
 
 const LogoScreen = () => {
+
+    music.play();
+  useEffect(() => {
+    
+
+    if(sessionStorage.getItem("audioTime")!=null){
+      music.currentTime = sessionStorage.getItem("audioTime");
+      sessionStorage.removeItem("audioTime");
+  }
+  })
+
+
+
+
     planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
     var [lobbyState, setLobbyState] = useState("");
 
@@ -616,4 +631,5 @@ export default LogoScreen;
 export {
     gameName,
     getPlanet,
+    music
 }
