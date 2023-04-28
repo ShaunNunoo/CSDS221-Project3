@@ -48,7 +48,7 @@ const ChangePlanet = () => {
             <label
                 style={{
                     position: 'absolute',
-                    left: screenWidth / 2 - scale(50),
+                    left: screenWidth / 2 - scale(13 * getPlanet(planetNum).name.length),
                     top: scale(80),
                     fontFamily: 'fantasy',
                     fontWeight: 'bold',
