@@ -11,11 +11,16 @@ import PlanetChange from '../../Sounds/PlanetChange.mp3'
 import { getPlanet } from '../LogoScreen/LogoScreen';
 import Planets from '../../components/Planets';
 
+
 var planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
+
+if (isNaN(planetNum))
+    planetNum = 2;
+
 const ChangePlanet = () => {
 
     var [selectNum, setSelectNum] = useState(planetNum);
-
+    console.log(planetNum);
     const navigate = useNavigate();
 
     return (
@@ -263,13 +268,13 @@ const ChangePlanet = () => {
                         sessionStorage.setItem("selectedPlanet", ++planetNum);
                         console.log(planetNum);
                         (new Audio(PlanetChange)).play();
-                    } else {
+                    } /*else {
                         sessionStorage.setItem("selectedPlanet", 5);
                         planetNum = 5;
                         setSelectNum(5)
                         console.log(planetNum);
 
-                    }
+                    }*/
                 }}
 
                 style={{
