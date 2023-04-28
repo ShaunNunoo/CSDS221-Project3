@@ -90,48 +90,56 @@ const SoloGameScreen = () => {
 
         for (var i = 0; i < meteors.length; i++)
             for (var j = i + 1; j < meteors.length; j++)
-                meteors[i].onCollision(meteors[j], (object, collisionNormal) => {
-                    var mag = Math.sqrt(collisionNormal[0] * collisionNormal[0] + collisionNormal[1] * collisionNormal[1]);
 
-                    var v = [collisionNormal[0] / mag, collisionNormal[1] / mag];
-                    var u = [-collisionNormal[1] / mag, collisionNormal[0] / mag];
-
-
-                    var v1 = [
-                        object.speed * object.direction.x * v[0] + object.speed * object.direction.y * v[1],
-                        object.speed * object.direction.x * u[0] + object.speed * object.direction.y * u[1]
-                    ];
-                    var s1 = object.speed;
-                    var s2 = meteors[j].speed;
-                    var v2 = [
-                        meteors[j].speed * meteors[j].direction.x * v[0] + meteors[j].speed * meteors[j].direction.y * v[1],
-                        meteors[j].speed * meteors[j].direction.x * u[0] + meteors[j].speed * meteors[j].direction.y * u[1]
-                    ];
-                    var m1 = (object.size.width * object.size.height);
-                    var m2 = (meteors[j].size.width * meteors[j].size.height);
+                if (meteors[i].position.x - meteors[i].size.width / 2 >= 0 && meteors[i].position.x + meteors[i].size.width / 2 <= screenWidth &&
+                    meteors[i].position.y - meteors[i].size.height / 2 >= 0 && meteors[i].position.y + meteors[i].size.height / 2 <= screenHeight &&
+                    meteors[j].position.x - meteors[j].size.width / 2 >= 0 && meteors[j].position.x + meteors[j].size.width / 2 <= screenWidth &&
+                    meteors[j].position.y - meteors[j].size.height / 2 >= 0 && meteors[j].position.y + meteors[j].size.height / 2 <= screenHeight
+                )
+                    meteors[i].onCollision(meteors[j], (object, collisionNormal) => {
 
 
+                        var mag = Math.sqrt(collisionNormal[0] * collisionNormal[0] + collisionNormal[1] * collisionNormal[1]);
 
-                    object.speed = (s1 * (m1 - m2) + 2 * m2 * s2) / (m1 + m2);
-                    meteors[j].speed = (s2 * (m2 - m1) + 2 * m1 * s1) / (m1 + m2);
+                        var v = [collisionNormal[0] / mag, collisionNormal[1] / mag];
+                        var u = [-collisionNormal[1] / mag, collisionNormal[0] / mag];
+
+
+                        var v1 = [
+                            object.speed * object.direction.x * v[0] + object.speed * object.direction.y * v[1],
+                            object.speed * object.direction.x * u[0] + object.speed * object.direction.y * u[1]
+                        ];
+                        var s1 = object.speed;
+                        var s2 = meteors[j].speed;
+                        var v2 = [
+                            meteors[j].speed * meteors[j].direction.x * v[0] + meteors[j].speed * meteors[j].direction.y * v[1],
+                            meteors[j].speed * meteors[j].direction.x * u[0] + meteors[j].speed * meteors[j].direction.y * u[1]
+                        ];
+                        var m1 = (object.size.width * object.size.height);
+                        var m2 = (meteors[j].size.width * meteors[j].size.height);
 
 
 
-                    object.setDirection([
-                        (v1[0] * (m1 - m2) + 2 * m2 * v2[0]) / (m1 + m2) * v[0] + (v1[1] * (m1 - m2) + 2 * m2 * v2[1]) / (m1 + m2) * u[0],
-                        (v1[0] * (m1 - m2) + 2 * m2 * v2[0]) / (m1 + m2) * v[1] + (v1[1] * (m1 - m2) + 2 * m2 * v2[1]) / (m1 + m2) * u[1]
-                    ]);
-                    meteors[j].setDirection([
-                        (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2) * v[0] + (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2) * u[0],
-                        (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2) * v[1] + (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2) * u[1]
-                    ]);
+                        object.speed = (s1 * (m1 - m2) + 2 * m2 * s2) / (m1 + m2);
+                        meteors[j].speed = (s2 * (m2 - m1) + 2 * m1 * s1) / (m1 + m2);
 
-                    if (object.speed == 0 || (object.direction.x == 0 && object.direction.y == 0)) {
-                        object.speed = 1;
-                        object.setDirection([Math.random(), Math.random()]);
 
-                    }
-                })
+
+                        object.setDirection([
+                            (v1[0] * (m1 - m2) + 2 * m2 * v2[0]) / (m1 + m2) * v[0] + (v1[1] * (m1 - m2) + 2 * m2 * v2[1]) / (m1 + m2) * u[0],
+                            (v1[0] * (m1 - m2) + 2 * m2 * v2[0]) / (m1 + m2) * v[1] + (v1[1] * (m1 - m2) + 2 * m2 * v2[1]) / (m1 + m2) * u[1]
+                        ]);
+                        meteors[j].setDirection([
+                            (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2) * v[0] + (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2) * u[0],
+                            (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2) * v[1] + (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2) * u[1]
+                        ]);
+
+                        if (object.speed == 0 || (object.direction.x == 0 && object.direction.y == 0)) {
+                            object.speed = 1;
+                            object.setDirection([Math.random(), Math.random()]);
+
+                        }
+                    })
 
 
 
@@ -286,12 +294,11 @@ const SoloGameScreen = () => {
             if (!destroyed && meteorCount < Math.round(spawnSize))
                 createMeteor();
 
-
             if (spawnSize < 40)
                 spawnSize += 0.025;
 
 
-        }, 500);
+        }, 400);
 
         return () => {
             clearInterval(gameLoop);
