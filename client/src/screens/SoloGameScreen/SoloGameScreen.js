@@ -24,7 +24,7 @@ import { c } from '../../App'
 import { music } from '../LogoScreen/LogoScreen'
 const screenWidth = 1535;
 const screenHeight = 863;
-
+const gravitationalConstant = 0.0000667;
 
 var planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
 var earth = new GameObject([1535 / 2, 863 / 2], [300, 300], 0, Planets.Earth.planet, "planet", "", true);
@@ -66,7 +66,7 @@ const SoloGameScreen = () => {
         for (var i = 0; i < GameObjects.length; i++)
             if (GameObjects[i].id == "meteor") {
                 meteors.push(GameObjects[i]);
-                
+
                 GameObjects[i].onBorderCollision((object, collisionType) => {
 
                     /*if (collisionType == "x-collision")
@@ -104,8 +104,8 @@ const SoloGameScreen = () => {
                     var s1 = object.speed;
                     var s2 = meteors[j].speed;
                     var v2 = [
-                        meteors[j].speed * meteors[j].direction.x*v[0] + meteors[j].speed * meteors[j].direction.y*v[1],
-                        meteors[j].speed * meteors[j].direction.x*u[0] + meteors[j].speed * meteors[j].direction.y*u[1]
+                        meteors[j].speed * meteors[j].direction.x * v[0] + meteors[j].speed * meteors[j].direction.y * v[1],
+                        meteors[j].speed * meteors[j].direction.x * u[0] + meteors[j].speed * meteors[j].direction.y * u[1]
                     ];
                     var m1 = (object.size.width * object.size.height);
                     var m2 = (meteors[j].size.width * meteors[j].size.height);
@@ -118,17 +118,17 @@ const SoloGameScreen = () => {
 
 
                     object.setDirection([
-                        (v1[0] * (m1 - m2) + 2 * m2 * v2[0]) / (m1 + m2)*v[0]  + (v1[1] * (m1 - m2) + 2 * m2 * v2[1]) / (m1 + m2)*u[0],
-                        (v1[0] * (m1 - m2) + 2 * m2 * v2[0]) / (m1 + m2)*v[1]  + (v1[1] * (m1 - m2) + 2 * m2 * v2[1]) / (m1 + m2)*u[1]
+                        (v1[0] * (m1 - m2) + 2 * m2 * v2[0]) / (m1 + m2) * v[0] + (v1[1] * (m1 - m2) + 2 * m2 * v2[1]) / (m1 + m2) * u[0],
+                        (v1[0] * (m1 - m2) + 2 * m2 * v2[0]) / (m1 + m2) * v[1] + (v1[1] * (m1 - m2) + 2 * m2 * v2[1]) / (m1 + m2) * u[1]
                     ]);
                     meteors[j].setDirection([
-                        (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2)*v[0] +  (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2)*u[0],
-                        (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2)*v[1] +  (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2)*u[1]
+                        (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2) * v[0] + (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2) * u[0],
+                        (v2[0] * (m2 - m1) + 2 * m1 * v1[0]) / (m1 + m2) * v[1] + (v2[1] * (m2 - m1) + 2 * m1 * v1[1]) / (m1 + m2) * u[1]
                     ]);
 
-                    if(object.speed == 0 || (object.direction.x == 0 && object.direction.y == 0)){
+                    if (object.speed == 0 || (object.direction.x == 0 && object.direction.y == 0)) {
                         object.speed = 1;
-                        object.setDirection([Math.random(),Math.random()]);
+                        object.setDirection([Math.random(), Math.random()]);
 
                     }
                 })
@@ -143,14 +143,14 @@ const SoloGameScreen = () => {
                 currentMeteor.onCollision(currentSheild, (object, collisionNormal) => {
                     if (object.direction.x * (screenWidth / 2 - object.position.x) + object.direction.y * (screenHeight / 2 - object.position.y) >= 0) {
                         setDeflects(deflects += 1);
-                        var norm = [object.position.x - earth.position.x,object.position.y - earth.position.y];
+                        var norm = [object.position.x - earth.position.x, object.position.y - earth.position.y];
                         var mag = 200
-                   
-                        norm = [norm[0]/mag, norm[1]/mag];
+
+                        norm = [norm[0] / mag, norm[1] / mag];
                         var dir = [object.direction.x, object.direction.y];
-                        var dot = norm[0]*dir[0] + norm[1]*dir[1];
-                        
-                        object.setDirection([dir[0] - 2*dot*norm[0],dir[1] - 2*dot*norm[1]]);
+                        var dot = norm[0] * dir[0] + norm[1] * dir[1];
+
+                        object.setDirection([dir[0] - 2 * dot * norm[0], dir[1] - 2 * dot * norm[1]]);
 
                         new Audio(Bump).play()
                     }
@@ -304,9 +304,16 @@ const SoloGameScreen = () => {
     useEffect(() => {
         var w = screenWidth;
         var h = screenHeight;
-        earthSheild.setOrientation(Math.atan2(mousePos.y - scale(earth.position.y), mousePos.x - scale(earth.position.x)) * 180 / Math.PI + 90);
-        earthSheild.setPosition(200 * Math.cos(Math.atan2(mousePos.y - scale(h / 2), mousePos.x - scale(w / 2))) + w / 2, 200 * Math.sin(Math.atan2(mousePos.y - scale(h / 2), mousePos.x - scale(w / 2))) + h / 2);
-    }, [mousePos.x, mousePos.y]);
+        var mouseOrientation = Math.atan2(mousePos.y - scale(earth.position.y), mousePos.x - scale(earth.position.x)) * 180 / Math.PI + 90;
+        //  var angle = (mouseOrientation < 0) ? mouseOrientation + 360 : mouseOrientation;
+        //console.log(Math.min(angle - earthSheild.orientation, 360 - angle + earthSheild.orientation))
+        //if (earthSheild.orientation != angle) {
+        //     earthSheild.orientation += (Math.abs(Math.min(Math.abs(angle - earthSheild.orientation)), 360 - Math.abs(angle - earthSheild.orientation)) / 50);
+        //    earthSheild.orientation %= 360;
+        earthSheild.setOrientation(mouseOrientation);
+        earthSheild.setPosition(200 * Math.cos((mouseOrientation - 90) * Math.PI / 180) + w / 2, 200 * Math.sin((mouseOrientation - 90) * Math.PI / 180) + h / 2);
+        //  }
+    });
 
     useEffect(() => {
         const moveBackground = setInterval(() => {
@@ -318,11 +325,11 @@ const SoloGameScreen = () => {
 
     }, []);
 
+    if (destroyed && parseInt(localStorage.getItem("personalBest")) < deflects)
+        localStorage.setItem("personalBest", deflects);
+
     const [spectateHover, setSpectateHover] = useState(false);
     const [menuHover, setMenuHover] = useState(false);
-
-
-
     const [spectating, setSpectating] = useState(false)
     return (
         <div className='GameScreen'
@@ -365,13 +372,48 @@ const SoloGameScreen = () => {
                     }}
 
                 >TOTAL DEFLECTS </label>
+
+                <label
+                    style={{
+                        position: 'absolute',
+                        height: scale(40),
+                        width: scale(400),
+                        top: scale(screenHeight / 2 - 120),
+                        left: scaleH(screenWidth / 2) - scale(120),
+                        fontFamily: 'fantasy',
+                        fontSize: scale(40),
+                        zIndex: 100000001,
+                        color: "purple",
+                        textShadow: "10 10 #FF0000"
+                    }}
+
+                >PERSONAL BEST</label>
+
+
                 <label
                     style={{
                         position: 'absolute',
                         height: scale(40),
                         width: scale(screenWidth),
-                        top: scale(screenHeight / 2 - 180),
-                        left: scaleH(screenWidth / 2) - scale(15 * (deflects == 0 ? 1 : Math.floor(Math.log10(deflects)))),
+                        top: scale(screenHeight / 2 - 70),
+                        left: scaleH(screenWidth / 2) - scale(18 * (deflects == 0 ? 1 : Math.floor(Math.log10(deflects)))),
+                        fontFamily: 'fantasy',
+                        fontSize: scale(40),
+                        zIndex: 100000001,
+                        color: "purple",
+                        textShadow: "10 10 #FF0000"
+                    }}
+
+                >{localStorage.getItem("personalBest")}</label>
+
+
+                <label
+                    style={{
+                        position: 'absolute',
+                        height: scale(40),
+                        width: scale(screenWidth),
+                        top: scale(screenHeight / 2 - 190),
+                        left: scaleH(screenWidth / 2) - scale(17 * (deflects == 0 ? 1 : Math.floor(Math.log10(deflects)))),
                         fontFamily: 'fantasy',
                         fontSize: scale(40),
                         zIndex: 100000001,
@@ -386,7 +428,7 @@ const SoloGameScreen = () => {
                         position: 'absolute',
                         height: scale(40),
                         width: scale(400),
-                        top: scale(screenHeight / 2 - 140),
+                        top: scale(screenHeight / 2 - 350),
                         left: scaleH(screenWidth / 2) - scale(180),
                         fontFamily: 'fantasy',
                         fontSize: scale(80),
