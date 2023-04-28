@@ -17,7 +17,7 @@ const ChangePlanet = () => {
     var [selectNum, setSelectNum] = useState(planetNum);
 
     const navigate = useNavigate();
-    
+
     return (
         <div
             style={{
@@ -29,17 +29,17 @@ const ChangePlanet = () => {
             }}
         >
             <img
-                    src={Images.GameLogo}
-                    style={{
-                        left: screenWidth - scale(180),
-                        top:  screenHeight - scale(144),
-                        position: 'absolute',
-                        width: scale(180),
-                        height: scale(144),
-                        zIndex: 100000,
+                src={Images.GameLogo}
+                style={{
+                    left: screenWidth - scale(180),
+                    top: screenHeight - scale(144),
+                    position: 'absolute',
+                    width: scale(180),
+                    height: scale(144),
+                    zIndex: 100000,
 
-                    }}
-                />
+                }}
+            />
             <label
                 style={{
                     position: 'absolute',
@@ -56,7 +56,7 @@ const ChangePlanet = () => {
             </label>
             <button
 
-     
+
                 onClick={() => {
                     (new Audio(ButtonHover)).play();
                     navigate(-1);
@@ -103,12 +103,12 @@ const ChangePlanet = () => {
             </div>
 
             <button
-        
+
                 onClick={() => {
 
                     if (planetNum > 1 /*&& planets[planetSelect - 1].image != null*/) {
                         sessionStorage.setItem("selectedPlanet", --planetNum);
-                        setSelectNum(selectNum-=1)
+                        setSelectNum(selectNum -= 1)
                         console.log(planetNum);
                         (new Audio(PlanetChange)).play();
                     } else {
@@ -174,7 +174,7 @@ const ChangePlanet = () => {
                     height: scale(50),
                     width: scale(50),
                     transform: "scaleX(-1)"
-                    
+
 
                 }}
                 src={Images.BackButton2}
@@ -257,16 +257,16 @@ const ChangePlanet = () => {
 
                 onClick={() => {
 
-                    if (planetNum < 4 /*&& planets[planetSelect + 1].image != null*/) {
+                    if (planetNum < 5 /*&& planets[planetSelect + 1].image != null*/) {
 
-                        setSelectNum(selectNum+=1)
+                        setSelectNum(selectNum += 1)
                         sessionStorage.setItem("selectedPlanet", ++planetNum);
                         console.log(planetNum);
                         (new Audio(PlanetChange)).play();
                     } else {
-                        sessionStorage.setItem("selectedPlanet", 4);
-                        planetNum = 4;
-                        setSelectNum(4)
+                        sessionStorage.setItem("selectedPlanet", 5);
+                        planetNum = 5;
+                        setSelectNum(5)
                         console.log(planetNum);
 
                     }

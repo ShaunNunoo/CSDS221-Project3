@@ -26,7 +26,7 @@ const getPlanet = function (num) {
         case 4:
             return Planets.Jupiter;
         case 5:
-            return Planets.Saturn;
+            return Planets.Neptune;
         case 6:
             return Planets.Uranus;
         case 7:
@@ -48,14 +48,14 @@ music.autoplay = true;
 const LogoScreen = () => {
 
     music.play();
-  useEffect(() => {
-    
+    useEffect(() => {
 
-    if(sessionStorage.getItem("audioTime")!=null){
-      music.currentTime = sessionStorage.getItem("audioTime");
-      sessionStorage.removeItem("audioTime");
-  }
-  })
+
+        if (sessionStorage.getItem("audioTime") != null) {
+            music.currentTime = sessionStorage.getItem("audioTime");
+            sessionStorage.removeItem("audioTime");
+        }
+    })
 
 
 
@@ -84,19 +84,19 @@ const LogoScreen = () => {
 
     function updateLobbyState() {
 
-     /*   fetch('/getScreen', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ UUID: UUID })
-        })
-            .then(async response => await response.json())
-            .then(async data => {
-                setLobbyState(await data);
-            })*/
+        /*   fetch('/getScreen', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json'
+               },
+               body: JSON.stringify({ UUID: UUID })
+           })
+               .then(async response => await response.json())
+               .then(async data => {
+                   setLobbyState(await data);
+               })*/
 
-            setLobbyState(sessionStorage.getItem("screen"));
+        setLobbyState(sessionStorage.getItem("screen"));
     }
 
 

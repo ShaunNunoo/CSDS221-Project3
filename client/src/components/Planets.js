@@ -67,9 +67,12 @@ export default {
 
     Neptune: {
         name: "Neptune",
-        stats: {},
-        image: null,
-        planet: null,
+        stats: {
+            strength: 70,
+            defence: 65
+        },
+        image: Images.NeptuneBackground,
+        planet: Images.Neptune,
     },
 
     Pluto: {
