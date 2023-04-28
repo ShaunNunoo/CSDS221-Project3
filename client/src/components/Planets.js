@@ -3,9 +3,12 @@ import Images from "../Images"
 export default {
     Mercury: {
         name: "Mercury",
-        stats: {},
-        image: null,
-        planet: null,
+        stats: {
+            strength: 30,
+            defence: 45
+        },
+        image: Images.MercuryBackground,
+        planet: Images.Mercury,
     },
 
     Venus: {

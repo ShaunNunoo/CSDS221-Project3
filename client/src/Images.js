@@ -18,4 +18,6 @@ export default {
     BlackHole: require("./Images/BlackHole.png"),
     Neptune: require("./Images/Neptune.png"),
     NeptuneBackground: require("./Images/NeptuneBackground.jpg"),
+    Mercury: require("./Images/Mercury.png"),
+    MercuryBackground: require("./Images/MercuryBackground.jpg"),
 }

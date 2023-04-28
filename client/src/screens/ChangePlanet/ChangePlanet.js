@@ -111,15 +111,15 @@ const ChangePlanet = () => {
 
                 onClick={() => {
 
-                    if (planetNum > 1 /*&& planets[planetSelect - 1].image != null*/) {
+                    if (planetNum > 0 /*&& planets[planetSelect - 1].image != null*/) {
                         sessionStorage.setItem("selectedPlanet", --planetNum);
                         setSelectNum(selectNum -= 1)
                         console.log(planetNum);
                         (new Audio(PlanetChange)).play();
                     } else {
-                        sessionStorage.setItem("selectedPlanet", 1);
-                        setSelectNum(1)
-                        planetNum = 1;
+                        sessionStorage.setItem("selectedPlanet", 0);
+                        setSelectNum(0)
+                        planetNum = 0;
                         console.log(planetNum);
                     }
                 }}
@@ -268,13 +268,13 @@ const ChangePlanet = () => {
                         sessionStorage.setItem("selectedPlanet", ++planetNum);
                         console.log(planetNum);
                         (new Audio(PlanetChange)).play();
-                    } /*else {
+                    } else {
                         sessionStorage.setItem("selectedPlanet", 5);
                         planetNum = 5;
                         setSelectNum(5)
                         console.log(planetNum);
 
-                    }*/
+                    }
                 }}
 
                 style={{
