@@ -295,7 +295,7 @@ const SoloGameScreen = () => {
                 createMeteor();
 
             if (spawnSize < 40)
-                spawnSize += 0.025;
+                spawnSize += 0.05;
 
 
         }, 400);

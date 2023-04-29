@@ -37,6 +37,9 @@ const getPlanet = function (num) {
             return Planets.Earth;
     }
 }
+
+
+
 var planetNum = parseInt(sessionStorage.getItem("selectedPlanet"));
 var earthSheild = new GameObject([500, 500], [225, 75], 0, Images.PlanetSheild, "none", "", false);
 var planet = new GameObject([0, screenHeight], [1000, 1000], 0, getPlanet(planetNum), "none", "", false);
@@ -46,10 +49,12 @@ music.loop = true;
 music.autoplay = true;
 
 const LogoScreen = () => {
-
+    console.log("v: " + sessionStorage.getItem("previous"))
     music.play();
     useEffect(() => {
 
+        if (sessionStorage.getItem("previous") == "game")
+            sessionStorage.setItem("previous", "refresh")
 
         if (sessionStorage.getItem("audioTime") != null) {
             music.currentTime = sessionStorage.getItem("audioTime");
@@ -598,7 +603,7 @@ const LogoScreen = () => {
         }, 50);
 
         const timerId2 = setInterval(() => {
-            setLogoOpacity(logoOpacity => Math.min(logoOpacity + 0.01, 1))
+            setLogoOpacity(logoOpacity => Math.min(logoOpacity + 0.03, 1))
 
         }, 100);
 

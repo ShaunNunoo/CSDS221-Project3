@@ -14,6 +14,11 @@ const screenHeight = Math.min(window.screen.width, window.screen.height);
 if (sessionStorage.getItem("screen") == null)
   sessionStorage.setItem("screen", "logo")
 
+
+if (sessionStorage.getItem("previous") == null)
+  sessionStorage.setItem("previous", "lobby")
+
+
 if (sessionStorage.getItem("selectedPlanet") == null)
   sessionStorage.setItem("selectedPlanet", 2)
 

@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from 'react'
 import Images from '../Images';
-import {scale, scaleH, scaleV, screenHeight, screenWidth } from '../App';
+import { scale, scaleH, scaleV, screenHeight, screenWidth } from '../App';
 var GameObjects = [];
 
 const dotProduct = function (v1, v2) {
@@ -51,6 +51,7 @@ class GameObject {
     applyPhysics = false;
     visible = true;
     zIndex = 0;
+    acceleration = 0;
 
 
     position = {
